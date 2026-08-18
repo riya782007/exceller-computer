@@ -1,89 +1,74 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { PageHeader } from '@/components/admin/ui-state'
+import { BUSINESS } from '@/lib/constants'
+import { DEFAULT_TAX_CONFIG } from '@/types'
 
 export const metadata: Metadata = {
   title: 'Settings',
 }
 
-export default function SettingsPage() {
+function flag(enabled: boolean): string {
+  return enabled ? 'Configured' : 'Not configured'
+}
+
+export default function SettingsPage(): React.ReactElement {
+  const integrations = [
+    { label: 'Supabase', ok: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) },
+    { label: 'WhatsApp (Evolution API)', ok: Boolean(process.env.EVOLUTION_API_URL && process.env.EVOLUTION_API_KEY) },
+    { label: 'n8n webhook secret', ok: Boolean(process.env.N8N_WEBHOOK_SECRET) },
+    { label: 'OpenAI (agent)', ok: Boolean(process.env.OPENAI_API_KEY) },
+  ]
+
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-1 text-sm text-gray-600">System configuration and preferences</p>
-      </div>
+      <PageHeader title="Settings" description="Business constants and whether server integrations are present. Secrets are not displayed." />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Business Info */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">Business Information</h2>
-          <p className="mt-1 text-sm text-gray-500">Your business details used on invoices and communications</p>
-          <div className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-500">Business Name</label>
-              <p className="text-sm text-gray-900">Exeller Infosolutions LLP</p>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500">Address</label>
-              <p className="text-sm text-gray-900">Opp. Dwarka Mor Metro Station Gate No. 2, Sewak Park, New Delhi – 110059</p>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500">GST Number</label>
-              <p className="text-sm text-gray-500 italic">Not configured</p>
-            </div>
+          <h2 className="text-lg font-semibold">Business information</h2>
+          <div className="mt-4 space-y-3 text-sm">
+            <p>{BUSINESS.legalName}</p>
+            <p>
+              {BUSINESS.address.street}, {BUSINESS.address.area}, {BUSINESS.address.city} – {BUSINESS.address.pincode}
+            </p>
+            <p>Phone: {process.env.NEXT_PUBLIC_BUSINESS_PHONE ?? BUSINESS.phone}</p>
+            <p>GSTIN: {BUSINESS.gst || 'Not set in code yet'}</p>
           </div>
         </div>
 
-        {/* Tax Configuration */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">Tax Configuration</h2>
-          <p className="mt-1 text-sm text-gray-500">GST rates for invoice calculations</p>
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="text-sm text-gray-700">CGST Rate (Intra-state)</span>
-              <span className="text-sm font-medium text-gray-900">9%</span>
-            </div>
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="text-sm text-gray-700">SGST Rate (Intra-state)</span>
-              <span className="text-sm font-medium text-gray-900">9%</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">IGST Rate (Inter-state)</span>
-              <span className="text-sm font-medium text-gray-900">18%</span>
-            </div>
+          <h2 className="text-lg font-semibold">Tax engine</h2>
+          <p className="mt-1 text-sm text-gray-500">Rates live in DEFAULT_TAX_CONFIG — do not copy them into screens.</p>
+          <div className="mt-4 space-y-2 text-sm">
+            <p>CGST {DEFAULT_TAX_CONFIG.cgstRate}%</p>
+            <p>SGST {DEFAULT_TAX_CONFIG.sgstRate}%</p>
+            <p>IGST {DEFAULT_TAX_CONFIG.igstRate}%</p>
           </div>
         </div>
 
-        {/* Integration Status */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">Integrations</h2>
-          <p className="mt-1 text-sm text-gray-500">External service connections</p>
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">WhatsApp (Evolution API)</span>
-              <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-500">Not Connected</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">n8n Automation</span>
-              <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-500">Not Connected</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">AI Agent</span>
-              <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-500">Not Connected</span>
-            </div>
-          </div>
+          <h2 className="text-lg font-semibold">Integrations</h2>
+          <ul className="mt-4 space-y-2 text-sm">
+            {integrations.map((item) => (
+              <li key={item.label} className="flex justify-between">
+                <span>{item.label}</span>
+                <span className={item.ok ? 'text-green-700' : 'text-gray-500'}>{flag(item.ok)}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* User Management */}
         <div className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
-          <p className="mt-1 text-sm text-gray-500">Manage admin and technician accounts</p>
-          <div className="mt-4">
-            <a
-              href="/admin/settings/users"
-              className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Manage Users →
-            </a>
+          <h2 className="text-lg font-semibold">Staff</h2>
+          <p className="mt-1 text-sm text-gray-500">Technicians and customers are managed in their own modules.</p>
+          <div className="mt-4 flex gap-3 text-sm">
+            <Link className="text-brand-700" href="/admin/technicians">
+              Technicians
+            </Link>
+            <Link className="text-brand-700" href="/admin/customers">
+              Customers
+            </Link>
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ export async function createInventoryItem(input: unknown): Promise<ActionResult<
         is_public: data.is_public,
         condition: data.condition || null,
         warranty_months: data.warranty_months,
-        low_stock_threshold: 2,
+        low_stock_threshold: data.low_stock_threshold ?? 2,
       })
       .select('id')
       .single()
@@ -78,6 +78,7 @@ export async function updateInventoryItem(
         is_public: data.is_public,
         condition: data.condition || null,
         warranty_months: data.warranty_months,
+        low_stock_threshold: data.low_stock_threshold,
       })
       .eq('id', itemId)
 

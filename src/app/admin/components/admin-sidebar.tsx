@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from '@/lib/actions/auth'
 import type { UserRole } from '@/types'
@@ -66,7 +67,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
         {visibleItems.map((item) => {
           const isActive = pathname.startsWith(item.href)
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -78,7 +79,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
             >
               <span className="text-lg">{item.icon}</span>
               {!collapsed && <span>{item.name}</span>}
-            </a>
+            </Link>
           )
         })}
       </nav>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { InvoiceForm } from '@/components/admin/invoice-form'
+import { PageHeader } from '@/components/admin/ui-state'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = { title: 'New invoice' }
@@ -13,7 +14,7 @@ export default async function NewInvoicePage(): Promise<React.ReactElement> {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Create GST invoice</h1>
+      <PageHeader title="Create GST invoice" description="Tax is calculated by the shared GST engine, not hardcoded on this form." />
       <InvoiceForm
         customers={(customers ?? []).map((row) => ({ id: row.id, label: row.full_name }))}
         jobs={(jobs ?? []).map((row) => ({ id: row.id, label: row.job_card_number }))}

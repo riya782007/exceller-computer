@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { PersonForm } from '@/components/admin/person-form'
+import { PageHeader } from '@/components/admin/ui-state'
 
 export const metadata: Metadata = { title: 'Add technician' }
 
 export default function NewTechnicianPage(): React.ReactElement {
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Add technician</h1>
+      <PageHeader title="Add technician" description="Creates a staff login. Share credentials out of band." />
       <PersonForm kind="technician" />
     </div>
   )

@@ -4,7 +4,7 @@ import { requireRole } from '@/lib/auth/require-role'
 import { AppError, toUserMessage } from '@/lib/errors'
 import { logger } from '@/lib/logger'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createProfileSchema } from '@/lib/validations/schemas'
+import { createProfileSchema, updateProfileSchema } from '@/lib/validations/schemas'
 import type { ActionResult } from '@/types'
 import { z } from 'zod'
 
@@ -113,5 +113,39 @@ export async function createStaffUser(input: unknown): Promise<ActionResult<{ id
       return { success: false, error: error.errors[0]?.message ?? 'Invalid user' }
     }
     return { success: false, error: toUserMessage(error, 'Could not create user') }
+  }
+}
+
+export async function updateCustomer(
+  customerId: string,
+  input: unknown
+): Promise<ActionResult<{ id: string }>> {
+  try {
+    await requireRole('admin')
+    const data = updateProfileSchema.parse(input)
+    const admin = createAdminClient()
+
+    const { error } = await admin
+      .from('profiles')
+      .update({
+        full_name: data.full_name,
+        email: data.email || null,
+        phone: data.phone || null,
+        address: data.address || null,
+      })
+      .eq('id', customerId)
+      .eq('role', 'customer')
+
+    if (error) {
+      logger.error('updateCustomer failed', { message: error.message })
+      throw new AppError('Could not update customer', 'CUSTOMER_UPDATE_FAILED', 400)
+    }
+
+    return { success: true, data: { id: customerId } }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.errors[0]?.message ?? 'Invalid customer' }
+    }
+    return { success: false, error: toUserMessage(error, 'Could not update customer') }
   }
 }

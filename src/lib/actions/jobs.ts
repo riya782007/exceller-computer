@@ -12,6 +12,7 @@ import {
   updateRepairJobSchema,
 } from '@/lib/validations/schemas'
 import type { ActionResult, JobStatus } from '@/types'
+import type { Database } from '@/types/database'
 import { z } from 'zod'
 
 const assignTechSchema = z.object({
@@ -74,16 +75,20 @@ export async function updateRepairJob(jobId: string, input: unknown): Promise<Ac
     const data = updateRepairJobSchema.parse(input)
     const supabase = await createServerSupabaseClient()
 
-    const { error } = await supabase
-      .from('repair_jobs')
-      .update({
-        technician_id: data.technician_id,
-        diagnosis: data.diagnosis,
-        estimated_cost: data.estimated_cost,
-        final_cost: data.final_cost,
-        notes: data.notes,
-      })
-      .eq('id', jobId)
+    const patch: Database['public']['Tables']['repair_jobs']['Update'] = {}
+    if (data.customer_id !== undefined) patch.customer_id = data.customer_id
+    if (data.technician_id !== undefined) patch.technician_id = data.technician_id
+    if (data.device_type !== undefined) patch.device_type = data.device_type
+    if (data.device_brand !== undefined) patch.device_brand = data.device_brand
+    if (data.device_model !== undefined) patch.device_model = data.device_model || null
+    if (data.serial_number !== undefined) patch.serial_number = data.serial_number || null
+    if (data.reported_fault !== undefined) patch.reported_fault = data.reported_fault
+    if (data.diagnosis !== undefined) patch.diagnosis = data.diagnosis
+    if (data.estimated_cost !== undefined) patch.estimated_cost = data.estimated_cost
+    if (data.final_cost !== undefined) patch.final_cost = data.final_cost
+    if (data.notes !== undefined) patch.notes = data.notes
+
+    const { error } = await supabase.from('repair_jobs').update(patch).eq('id', jobId)
 
     if (error) {
       logger.error('updateRepairJob failed', { message: error.message, jobId })

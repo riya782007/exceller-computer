@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { JobsKanban, type KanbanJob } from '@/components/admin/jobs-kanban'
+import { Button } from '@/components/ui/button'
+import { ErrorState, PageHeader } from '@/components/admin/ui-state'
 import { getCurrentUser } from '@/lib/auth/require-role'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
@@ -12,13 +14,14 @@ export default async function JobsPage(): Promise<React.ReactElement> {
   const user = await getCurrentUser()
   const supabase = await createServerSupabaseClient()
 
-  const [{ data: jobs, error }, { data: technicians }] = await Promise.all([
+  const [{ data: jobs, error }, { data: technicians, error: techError }] = await Promise.all([
     supabase
       .from('repair_jobs')
       .select(
         `
         id,
         job_card_number,
+        device_type,
         device_brand,
         device_model,
         reported_fault,
@@ -31,15 +34,11 @@ export default async function JobsPage(): Promise<React.ReactElement> {
       )
       .order('created_at', { ascending: false })
       .limit(200),
-    supabase.from('profiles').select('id, full_name').eq('role', 'technician').eq('is_active', true),
+    supabase.from('profiles').select('id, full_name').eq('role', 'technician').eq('is_active', true).order('full_name'),
   ])
 
   if (error) {
-    return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-700">Could not load jobs. Check your login and database connection.</p>
-      </div>
-    )
+    return <ErrorState message="Could not load repair jobs. Check your session and database connection." />
   }
 
   const normalized: KanbanJob[] = (jobs ?? []).map((job) => {
@@ -50,6 +49,7 @@ export default async function JobsPage(): Promise<React.ReactElement> {
     return {
       id: job.id,
       job_card_number: job.job_card_number,
+      device_type: job.device_type,
       device_brand: job.device_brand,
       device_model: job.device_model,
       reported_fault: job.reported_fault,
@@ -63,15 +63,18 @@ export default async function JobsPage(): Promise<React.ReactElement> {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Repair board</h1>
-          <p className="mt-1 text-sm text-gray-600">Received → diagnosed → quoted → approved → in repair → ready → delivered</p>
-        </div>
-        <Link href="/admin/jobs/new" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-          + New job
-        </Link>
-      </div>
+      <PageHeader
+        title="Repair jobs"
+        description="Shop floor board. Drag a card or use the status buttons. Changes save to Supabase immediately."
+        action={
+          <Button asChild>
+            <Link href="/admin/jobs/new">New job</Link>
+          </Button>
+        }
+      />
+      {techError ? (
+        <p className="mb-3 text-xs text-amber-700">Technician list could not be loaded; assignment may be unavailable.</p>
+      ) : null}
       <JobsKanban
         initialJobs={normalized}
         technicians={technicians ?? []}

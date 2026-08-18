@@ -1,6 +1,7 @@
 'use client'
 
 import { createInvoice } from '@/lib/actions/invoices'
+import { ErrorState } from '@/components/admin/ui-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -41,13 +42,13 @@ export function InvoiceForm({
       setError(result.error)
       return
     }
-    router.push('/admin/invoices')
+    router.push(`/admin/invoices/${result.data.id}`)
     router.refresh()
   }
 
   return (
     <form action={onSubmit} className="max-w-xl space-y-4 rounded-xl border bg-white p-6">
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ? <ErrorState message={error} /> : null}
       <div>
         <Label htmlFor="customer_id">Customer</Label>
         <select id="customer_id" name="customer_id" required className="mt-1 h-9 w-full rounded-md border px-3 text-sm">

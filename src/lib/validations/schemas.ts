@@ -62,7 +62,16 @@ export const createRepairJobSchema = z.object({
 })
 
 export const updateRepairJobSchema = z.object({
-  technician_id: z.string().uuid().optional().nullable(),
+  customer_id: z.string().uuid().optional(),
+  technician_id: z.preprocess(
+    (value) => (value === '' ? null : value),
+    z.string().uuid().optional().nullable()
+  ),
+  device_type: z.string().min(2).max(100).optional(),
+  device_brand: z.string().min(1).max(100).optional(),
+  device_model: z.string().max(200).optional().or(z.literal('')),
+  serial_number: z.string().max(100).optional().or(z.literal('')),
+  reported_fault: z.string().min(5).max(2000).optional(),
   diagnosis: z.string().max(5000).optional(),
   estimated_cost: z.coerce.number().min(0).optional(),
   final_cost: z.coerce.number().min(0).optional(),

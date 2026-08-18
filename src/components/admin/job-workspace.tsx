@@ -41,7 +41,7 @@ export function JobWorkspace({
       estimated_cost: formData.get('estimated_cost') ? Number(formData.get('estimated_cost')) : undefined,
       notes: String(formData.get('notes') ?? ''),
     })
-    setMessage(result.success ? 'Saved' : result.error)
+        setMessage(result.success ? 'Diagnosis saved' : result.error)
     if (result.success) router.refresh()
   }
 
@@ -59,7 +59,11 @@ export function JobWorkspace({
     <div className="grid gap-6 lg:grid-cols-2">
       <form action={saveDetails} className="space-y-3 rounded-xl border bg-white p-4">
         <h2 className="text-sm font-semibold">Diagnosis & quote</h2>
-        {message ? <p className="text-sm text-gray-600">{message}</p> : null}
+        {message ? (
+          <p className={`text-sm ${message.includes('saved') || message.includes('allocated') ? 'text-emerald-700' : 'text-red-700'}`}>
+            {message}
+          </p>
+        ) : null}
         <div>
           <Label htmlFor="diagnosis">Diagnosis</Label>
           <Textarea id="diagnosis" name="diagnosis" defaultValue={diagnosis ?? ''} className="mt-1" />

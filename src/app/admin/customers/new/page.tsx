@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { PersonForm } from '@/components/admin/person-form'
+import { PageHeader } from '@/components/admin/ui-state'
 
 export const metadata: Metadata = { title: 'Add customer' }
 
 export default function NewCustomerPage(): React.ReactElement {
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Add customer</h1>
+      <PageHeader title="Add customer" description="Creates a customer profile linked to Auth." />
       <PersonForm kind="customer" />
     </div>
   )
