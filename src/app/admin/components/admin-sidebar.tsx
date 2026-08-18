@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { signOut } from '@/lib/actions/auth'
 import type { UserRole } from '@/types'
 
 interface AdminSidebarProps {
@@ -19,7 +21,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: '📊', roles: ['admin', 'technician'] },
   { name: 'Jobs', href: '/admin/jobs', icon: '🔧', roles: ['admin', 'technician'] },
-  { name: 'Inventory', href: '/admin/inventory', icon: '📦', roles: ['admin'] },
+  { name: 'Inventory', href: '/admin/inventory', icon: '📦', roles: ['admin', 'technician'] },
   { name: 'Customers', href: '/admin/customers', icon: '👤', roles: ['admin'] },
   { name: 'Technicians', href: '/admin/technicians', icon: '👨‍🔧', roles: ['admin'] },
   { name: 'Invoices', href: '/admin/invoices', icon: '🧾', roles: ['admin'] },
@@ -42,7 +44,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
       {/* Logo area */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!collapsed && (
-          <span className="text-lg font-bold text-brand-700">Exceller ERP</span>
+          <span className="text-lg font-bold text-brand-700">Exeller ERP</span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -65,7 +67,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
         {visibleItems.map((item) => {
           const isActive = pathname.startsWith(item.href)
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -77,7 +79,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
             >
               <span className="text-lg">{item.icon}</span>
               {!collapsed && <span>{item.name}</span>}
-            </a>
+            </Link>
           )
         })}
       </nav>
@@ -92,6 +94,11 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
             <div className="flex-1 truncate">
               <p className="text-sm font-medium text-gray-900 truncate">{userName}</p>
               <p className="text-xs text-gray-500 capitalize">{userRole}</p>
+              <form action={signOut}>
+                <button type="submit" className="mt-1 text-xs text-gray-500 hover:text-gray-800">
+                  Sign out
+                </button>
+              </form>
             </div>
           </div>
         ) : (

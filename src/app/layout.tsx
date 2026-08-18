@@ -3,8 +3,8 @@ import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Exceller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
-    template: '%s | Exceller Computer',
+    default: 'Exeller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
+    template: '%s | Exeller Computer',
   },
   description:
     'Expert laptop and computer repair services near Dwarka Mor Metro Station, New Delhi. Component-level repair, refurbished laptops, spare parts & accessories. Same-day service available.',
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://excellercomputer.in',
-    siteName: 'Exceller Computer',
-    title: 'Exceller Computer — Laptop & Computer Repair Services',
+    url: 'https://exellercomputer.in',
+    siteName: 'Exeller Computer',
+    title: 'Exeller Computer — Laptop & Computer Repair Services',
     description:
       'Expert laptop and computer repair near Dwarka Mor Metro. Component-level repair, refurbished business laptops, spare parts.',
   },
