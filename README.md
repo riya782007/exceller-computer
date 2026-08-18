@@ -1,6 +1,6 @@
-# Exceller Computer — Integrated Business Platform
+# Exeller Computer — Integrated Business Platform
 
-**Exceller Infosolutions LLP** — Laptop & Computer Repair | Dwarka Mor, New Delhi
+**Exeller Infosolutions LLP** — Laptop & Computer Repair | Dwarka Mor, New Delhi
 
 ## Overview
 
@@ -133,7 +133,24 @@ PostgreSQL with 7 migrations covering:
 
 ## Environment Variables
 
-See `.env.local.example` for all required configuration.
+See `.env.example` for all required configuration.
+
+## What is implemented
+
+- PostgreSQL schema, RLS, atomic stock deduction, job status machine + audit log
+- Admin ERP: Kanban repair board, job cards, inventory, invoices, customers, technicians, WhatsApp sessions
+- Public site: home, services, local SEO pages, estimator, live refurbished catalog
+- Server-side GST tax engine + PDF invoice upload to Storage
+- WhatsApp Evolution API abstraction and n8n webhook forwarder
+- Grounded AI replies with hard stop when `chat_sessions.bot_state` is paused
+
+## Manual configuration still required
+
+1. Create a Supabase project, run `supabase db push` (or apply `supabase/migrations/` in order), then `supabase db seed` for sample inventory
+2. Create the first **admin** profile (signup creates `customer` by design — promote role in SQL or dashboard)
+3. Fill `.env.local` from `.env.example`
+4. Deploy n8n + Evolution API on Railway and point Evolution → n8n → `/api/webhooks/whatsapp`
+5. Add real GSTIN, business phone, UPI ID, and OpenAI key for the agent
 
 ## License
 

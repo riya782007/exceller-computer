@@ -20,7 +20,7 @@ export default function SettingsPage() {
           <div className="mt-4 space-y-3">
             <div>
               <label className="block text-xs font-medium text-gray-500">Business Name</label>
-              <p className="text-sm text-gray-900">Exceller Infosolutions LLP</p>
+              <p className="text-sm text-gray-900">Exeller Infosolutions LLP</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500">Address</label>

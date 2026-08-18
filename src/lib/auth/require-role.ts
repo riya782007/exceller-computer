@@ -52,6 +52,10 @@ export async function getCurrentUser(): Promise<{
   role: UserRole
   fullName: string
 } | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null
+  }
+
   const supabase = await createServerSupabaseClient()
 
   const {

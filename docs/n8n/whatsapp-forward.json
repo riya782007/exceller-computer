@@ -1,0 +1,31 @@
+{
+  "name": "Exeller WhatsApp intake",
+  "nodes": [
+    {
+      "name": "Evolution Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "evolution-whatsapp",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "Forward to Next.js",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR_VERCEL_DOMAIN/api/webhooks/whatsapp",
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-webhook-secret", "value": "={{$env.N8N_WEBHOOK_SECRET}}" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      }
+    }
+  ],
+  "notes": "Point Evolution API webhook at n8n, then n8n at this app. When chat_sessions.bot_state is paused the Next.js agent will not auto-reply."
+}

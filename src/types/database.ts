@@ -24,7 +24,7 @@ export type BotState = 'active' | 'paused' | 'escalated'
 
 export type TaxType = 'intra_state' | 'inter_state'
 
-export type PaymentStatus = 'pending' | 'paid' | 'partial' | 'cancelled'
+export type PaymentStatus = 'pending' | 'paid' | 'partial' | 'cancelled' | 'refunded'
 
 export interface Database {
   public: {
@@ -80,6 +80,7 @@ export interface Database {
           is_public: boolean
           condition: string | null
           warranty_months: number | null
+          low_stock_threshold: number
           created_at: string
           updated_at: string
         }
@@ -98,6 +99,7 @@ export interface Database {
           is_public?: boolean
           condition?: string | null
           warranty_months?: number | null
+          low_stock_threshold?: number
           created_at?: string
           updated_at?: string
         }
@@ -115,6 +117,7 @@ export interface Database {
           is_public?: boolean
           condition?: string | null
           warranty_months?: number | null
+          low_stock_threshold?: number
           updated_at?: string
         }
         Relationships: []
@@ -380,6 +383,7 @@ export interface Database {
           last_message_at: string | null
           escalated_at: string | null
           escalation_reason: string | null
+          context_data: Json
           created_at: string
           updated_at: string
         }
@@ -391,6 +395,7 @@ export interface Database {
           last_message_at?: string | null
           escalated_at?: string | null
           escalation_reason?: string | null
+          context_data?: Json
           created_at?: string
           updated_at?: string
         }
@@ -401,6 +406,7 @@ export interface Database {
           last_message_at?: string | null
           escalated_at?: string | null
           escalation_reason?: string | null
+          context_data?: Json
           updated_at?: string
         }
         Relationships: [
@@ -409,6 +415,42 @@ export interface Database {
             columns: ['customer_id']
             isOneToOne: false
             referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      job_status_events: {
+        Row: {
+          id: string
+          job_id: string
+          from_status: JobStatus | null
+          to_status: JobStatus
+          changed_by: string | null
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          from_status?: JobStatus | null
+          to_status: JobStatus
+          changed_by?: string | null
+          note?: string | null
+          created_at?: string
+        }
+        Update: {
+          job_id?: string
+          from_status?: JobStatus | null
+          to_status?: JobStatus
+          changed_by?: string | null
+          note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'job_status_events_job_id_fkey'
+            columns: ['job_id']
+            isOneToOne: false
+            referencedRelation: 'repair_jobs'
             referencedColumns: ['id']
           }
         ]
@@ -445,6 +487,9 @@ export interface Database {
       bot_state: BotState
       tax_type: TaxType
       payment_status: PaymentStatus
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }

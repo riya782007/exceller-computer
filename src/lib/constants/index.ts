@@ -3,8 +3,8 @@
  */
 
 export const BUSINESS = {
-  name: 'Exceller Computer',
-  legalName: 'Exceller Infosolutions LLP',
+  name: 'Exeller Computer',
+  legalName: 'Exeller Infosolutions LLP',
   address: {
     street: 'Opp. Dwarka Mor Metro Station Gate No. 2',
     area: 'Sewak Park',
@@ -14,8 +14,8 @@ export const BUSINESS = {
     country: 'India',
   },
   phone: '+919999999999', // TODO: Replace with actual phone number
-  email: 'info@excellercomputer.in',
-  website: 'https://excellercomputer.in',
+  email: 'info@exellercomputer.in',
+  website: 'https://exellercomputer.in',
   hours: {
     weekday: '10:00 AM – 8:00 PM',
     weekend: 'Closed (Sunday)',

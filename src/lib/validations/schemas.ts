@@ -40,6 +40,7 @@ export const inventoryItemSchema = z.object({
   is_public: z.boolean().default(false),
   condition: z.string().max(50).optional().or(z.literal('')),
   warranty_months: z.coerce.number().int().min(0).optional(),
+  low_stock_threshold: z.coerce.number().int().min(0).optional(),
 })
 
 export const updateInventorySchema = inventoryItemSchema.partial().omit({ sku: true })
@@ -113,7 +114,7 @@ export const createInvoiceSchema = z.object({
 
 export const updatePaymentStatusSchema = z.object({
   invoice_id: z.string().uuid('Invalid invoice ID'),
-  payment_status: z.enum(['pending', 'paid', 'partial', 'cancelled']),
+  payment_status: z.enum(['pending', 'paid', 'partial', 'cancelled', 'refunded']),
 })
 
 // ============================================
