@@ -414,7 +414,9 @@ export interface Database {
         ]
       }
     }
-    Views: Record<string, never>
+    Views: {
+      [_ in never]: never
+    }
     Functions: {
       allocate_part_to_job: {
         Args: {
@@ -434,7 +436,7 @@ export interface Database {
         Returns: boolean
       }
       generate_invoice_number: {
-        Args: Record<string, never>
+        Args: Record<PropertyKey, never>
         Returns: string
       }
     }
@@ -445,6 +447,9 @@ export interface Database {
       bot_state: BotState
       tax_type: TaxType
       payment_status: PaymentStatus
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
