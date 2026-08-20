@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { formatCurrency } from '@/lib/utils'
 
@@ -30,12 +31,12 @@ export default async function InventoryPage() {
           <h1 className="text-2xl font-bold text-gray-900">Inventory</h1>
           <p className="mt-1 text-sm text-gray-600">Manage parts, accessories, and refurbished laptops</p>
         </div>
-        <a
+        <Link
           href="/admin/inventory/new"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
         >
           + Add Item
-        </a>
+        </Link>
       </div>
 
       {/* Inventory Table */}
@@ -59,9 +60,9 @@ export default async function InventoryPage() {
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-gray-600">{item.sku}</td>
                   <td className="px-4 py-3">
-                    <a href={`/admin/inventory/${item.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-800">
+                    <Link href={`/admin/inventory/${item.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-800">
                       {item.name}
-                    </a>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="inline-flex rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 capitalize">

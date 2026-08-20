@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getStatusLabel, getStatusColor } from '@/lib/utils/job-status'
 import { formatDate } from '@/lib/utils'
@@ -41,12 +42,12 @@ export default async function JobsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Repair Jobs</h1>
           <p className="mt-1 text-sm text-gray-600">Manage all repair job cards</p>
         </div>
-        <a
+        <Link
           href="/admin/jobs/new"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
         >
           + New Job
-        </a>
+        </Link>
       </div>
 
       {/* Jobs Table */}
@@ -79,9 +80,9 @@ export default async function JobsPage() {
               jobs.map((job) => (
                 <tr key={job.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3">
-                    <a href={`/admin/jobs/${job.id}`} className="font-medium text-brand-600 hover:text-brand-800">
+                    <Link href={`/admin/jobs/${job.id}`} className="font-medium text-brand-600 hover:text-brand-800">
                       {job.job_card_number}
-                    </a>
+                    </Link>
                   </td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-gray-900">{job.device_brand} {job.device_model}</div>

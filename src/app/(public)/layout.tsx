@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Link from 'next/link'
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -6,22 +7,22 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <a href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <span className="text-xl font-bold text-brand-700">Exceller Computer</span>
-          </a>
+          </Link>
           <nav className="hidden items-center space-x-6 md:flex">
-            <a href="/services" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+            <Link href="/services" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Services
-            </a>
-            <a href="/estimator" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+            </Link>
+            <Link href="/estimator" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Price Estimator
-            </a>
-            <a href="/catalog" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+            </Link>
+            <Link href="/catalog" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Refurbished Laptops
-            </a>
-            <a href="/contact" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+            </Link>
+            <Link href="/contact" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Contact
-            </a>
+            </Link>
             <a
               href="https://wa.me/919999999999"
               target="_blank"
@@ -50,25 +51,25 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Exceller Computer</h3>
               <p className="mt-2 text-sm text-gray-600">
-                Exceller Infosolutions LLP — Expert laptop & computer repair services in New Delhi.
+                Exceller Infosolutions LLP — Expert laptop &amp; computer repair services in New Delhi.
               </p>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-gray-900">Services</h4>
               <ul className="mt-2 space-y-2 text-sm text-gray-600">
-                <li><a href="/services/laptop-repair" className="hover:text-brand-600">Laptop Repair</a></li>
-                <li><a href="/services/screen-replacement" className="hover:text-brand-600">Screen Replacement</a></li>
-                <li><a href="/services/motherboard-repair" className="hover:text-brand-600">Motherboard Repair</a></li>
-                <li><a href="/services/data-recovery" className="hover:text-brand-600">Data Recovery</a></li>
+                <li><Link href="/services/laptop-repair" className="hover:text-brand-600">Laptop Repair</Link></li>
+                <li><Link href="/services/screen-replacement" className="hover:text-brand-600">Screen Replacement</Link></li>
+                <li><Link href="/services/motherboard-repair" className="hover:text-brand-600">Motherboard Repair</Link></li>
+                <li><Link href="/services/data-recovery" className="hover:text-brand-600">Data Recovery</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-gray-900">Quick Links</h4>
               <ul className="mt-2 space-y-2 text-sm text-gray-600">
-                <li><a href="/estimator" className="hover:text-brand-600">Get Repair Estimate</a></li>
-                <li><a href="/catalog" className="hover:text-brand-600">Refurbished Laptops</a></li>
-                <li><a href="/about" className="hover:text-brand-600">About Us</a></li>
-                <li><a href="/contact" className="hover:text-brand-600">Contact</a></li>
+                <li><Link href="/estimator" className="hover:text-brand-600">Get Repair Estimate</Link></li>
+                <li><Link href="/catalog" className="hover:text-brand-600">Refurbished Laptops</Link></li>
+                <li><Link href="/about" className="hover:text-brand-600">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-brand-600">Contact</Link></li>
               </ul>
             </div>
             <div>

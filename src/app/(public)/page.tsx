@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Exceller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
@@ -21,12 +22,12 @@ export default function HomePage() {
             opposite Dwarka Mor Metro Station Gate No. 2.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
+            <Link
               href="/estimator"
               className="inline-flex items-center rounded-lg bg-brand-600 px-8 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-700 transition-colors"
             >
               Get Repair Estimate
-            </a>
+            </Link>
             <a
               href="https://wa.me/919999999999?text=Hi%2C%20I%20need%20help%20with%20my%20laptop"
               target="_blank"

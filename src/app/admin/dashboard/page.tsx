@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -76,34 +77,34 @@ export default async function DashboardPage() {
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <a
-            href="/admin/jobs?action=new"
+          <Link
+            href="/admin/jobs/new"
             className="flex items-center gap-3 rounded-lg border bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
           >
             <span className="text-xl">➕</span>
             <span className="text-sm font-medium text-gray-700">New Repair Job</span>
-          </a>
-          <a
-            href="/admin/inventory?action=new"
+          </Link>
+          <Link
+            href="/admin/inventory/new"
             className="flex items-center gap-3 rounded-lg border bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
           >
             <span className="text-xl">📦</span>
             <span className="text-sm font-medium text-gray-700">Add Inventory</span>
-          </a>
-          <a
-            href="/admin/invoices?action=new"
+          </Link>
+          <Link
+            href="/admin/invoices/new"
             className="flex items-center gap-3 rounded-lg border bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
           >
             <span className="text-xl">🧾</span>
             <span className="text-sm font-medium text-gray-700">Create Invoice</span>
-          </a>
-          <a
-            href="/admin/customers?action=new"
+          </Link>
+          <Link
+            href="/admin/customers/new"
             className="flex items-center gap-3 rounded-lg border bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
           >
             <span className="text-xl">👤</span>
             <span className="text-sm font-medium text-gray-700">Add Customer</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

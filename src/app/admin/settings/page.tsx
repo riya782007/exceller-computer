@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Settings',
@@ -78,12 +79,12 @@ export default function SettingsPage() {
           <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
           <p className="mt-1 text-sm text-gray-500">Manage admin and technician accounts</p>
           <div className="mt-4">
-            <a
+            <Link
               href="/admin/settings/users"
               className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Manage Users →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -474,7 +474,7 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }): React.Re
         {/* Footer */}
         <View style={styles.footer}>
           <View style={styles.footerDivider}>
-            <Text style={styles.footerBold}>Terms & Conditions:</Text>
+            <Text style={styles.footerBold}>Terms &amp; Conditions:</Text>
             <Text style={styles.footerText}>
               1. Payment is due upon receipt unless otherwise agreed.
             </Text>

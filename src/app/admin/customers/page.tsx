@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -30,12 +31,12 @@ export default async function CustomersPage() {
           <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
           <p className="mt-1 text-sm text-gray-600">Manage customer records</p>
         </div>
-        <a
+        <Link
           href="/admin/customers/new"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
         >
           + Add Customer
-        </a>
+        </Link>
       </div>
 
       <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
@@ -53,9 +54,9 @@ export default async function CustomersPage() {
               customers.map((customer) => (
                 <tr key={customer.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3">
-                    <a href={`/admin/customers/${customer.id}`} className="font-medium text-brand-600 hover:text-brand-800">
+                    <Link href={`/admin/customers/${customer.id}`} className="font-medium text-brand-600 hover:text-brand-800">
                       {customer.full_name}
-                    </a>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">{customer.email || '—'}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">{customer.phone || '—'}</td>

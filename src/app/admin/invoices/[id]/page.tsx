@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
@@ -197,9 +198,9 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
             <div className="rounded-lg border bg-white p-5 shadow-sm">
               <h3 className="mb-3 text-sm font-semibold text-gray-900">Linked Job</h3>
               <div className="space-y-1">
-                <a href={`/admin/jobs/${job.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-800">
+                <Link href={`/admin/jobs/${job.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-800">
                   {job.job_card_number}
-                </a>
+                </Link>
                 <p className="text-sm text-gray-600">{job.device_brand} {job.device_model || ''}</p>
                 <p className="text-xs text-gray-500 capitalize">Status: {job.status.replace('_', ' ')}</p>
               </div>

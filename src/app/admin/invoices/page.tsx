@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
@@ -55,12 +56,12 @@ export default async function InvoicesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
           <p className="mt-1 text-sm text-gray-600">Manage GST invoices and payment tracking</p>
         </div>
-        <a
+        <Link
           href="/admin/invoices/new"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
         >
           + Create Invoice
-        </a>
+        </Link>
       </div>
 
       {/* Summary Cards */}
@@ -98,9 +99,9 @@ export default async function InvoicesPage() {
               invoices.map((invoice) => (
                 <tr key={invoice.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3">
-                    <a href={`/admin/invoices/${invoice.id}`} className="font-medium text-brand-600 hover:text-brand-800">
+                    <Link href={`/admin/invoices/${invoice.id}`} className="font-medium text-brand-600 hover:text-brand-800">
                       {invoice.invoice_number}
-                    </a>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
                     {(invoice.customer as unknown as { full_name: string } | null)?.full_name || '—'}

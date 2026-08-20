@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -29,12 +30,12 @@ export default async function TechniciansPage() {
           <h1 className="text-2xl font-bold text-gray-900">Technicians</h1>
           <p className="mt-1 text-sm text-gray-600">Manage your repair team</p>
         </div>
-        <a
+        <Link
           href="/admin/technicians/new"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
         >
           + Add Technician
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -54,9 +55,9 @@ export default async function TechniciansPage() {
                 <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${tech.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {tech.is_active ? 'Active' : 'Inactive'}
                 </span>
-                <a href={`/admin/technicians/${tech.id}`} className="text-xs text-brand-600 hover:text-brand-800">
+                <Link href={`/admin/technicians/${tech.id}`} className="text-xs text-brand-600 hover:text-brand-800">
                   View →
-                </a>
+                </Link>
               </div>
             </div>
           ))
