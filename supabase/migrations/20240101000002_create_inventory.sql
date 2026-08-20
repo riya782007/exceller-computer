@@ -37,22 +37,15 @@ CREATE POLICY "admin_full_access_inventory"
   ON inventory_items
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Technicians: read access
 CREATE POLICY "technicians_read_inventory"
   ON inventory_items
   FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
-  );
+  USING (public.is_technician());
 
 -- Public: read items marked as public with stock > 0
 CREATE POLICY "public_read_inventory"

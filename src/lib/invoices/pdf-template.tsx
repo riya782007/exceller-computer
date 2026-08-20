@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  type DocumentProps,
 } from '@react-pdf/renderer'
 import { BUSINESS } from '@/lib/constants'
 import type { TaxType, PaymentStatus } from '@/types'
@@ -295,7 +296,11 @@ function getPaymentBadgeColor(status: PaymentStatus): { bg: string; text: string
 // PDF Document Component
 // ============================================
 
-export function InvoicePdfDocument({ data }: { data: InvoicePdfData }): React.ReactElement {
+export function InvoicePdfDocument({
+  data,
+}: {
+  data: InvoicePdfData
+}): React.ReactElement<DocumentProps> {
   const badgeColor = getPaymentBadgeColor(data.paymentStatus)
 
   return (

@@ -47,34 +47,22 @@ CREATE POLICY "admin_full_access_jobs"
   ON repair_jobs
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Technicians: read and update assigned jobs
 CREATE POLICY "technicians_read_assigned_jobs"
   ON repair_jobs
   FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
-    AND technician_id = auth.uid()
-  );
+  USING (public.is_technician() AND technician_id = auth.uid());
 
 CREATE POLICY "technicians_update_assigned_jobs"
   ON repair_jobs
   FOR UPDATE
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
-    AND technician_id = auth.uid()
-  );
+  USING (public.is_technician() AND technician_id = auth.uid())
+  WITH CHECK (public.is_technician() AND technician_id = auth.uid());
 
 -- Customers: read own jobs
 CREATE POLICY "customers_read_own_jobs"

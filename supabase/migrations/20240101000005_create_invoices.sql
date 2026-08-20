@@ -60,11 +60,8 @@ CREATE POLICY "admin_full_access_invoices"
   ON invoices
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Customers: read own invoices
 CREATE POLICY "customers_read_own_invoices"
@@ -79,11 +76,8 @@ CREATE POLICY "admin_full_access_invoice_items"
   ON invoice_items
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Customers: read own invoice items
 CREATE POLICY "customers_read_own_invoice_items"

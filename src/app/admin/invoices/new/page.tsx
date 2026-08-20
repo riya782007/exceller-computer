@@ -17,11 +17,13 @@ export default async function NewInvoicePage() {
     .eq('is_active', true)
     .order('full_name', { ascending: true })
 
-  // Fetch active repair jobs for the dropdown
+  // Fetch repair jobs eligible for invoicing (everything except terminal states).
+  // Listed explicitly rather than using .not(...,'in',...) so the values are
+  // type-checked against the job_status enum.
   const { data: jobs } = await supabase
     .from('repair_jobs')
     .select('id, job_card_number, device_brand, device_model, customer_id, status')
-    .not('status', 'in', '("delivered","cancelled")')
+    .in('status', ['received', 'diagnosed', 'quoted', 'approved', 'in_repair', 'ready'])
     .order('created_at', { ascending: false })
 
   return (

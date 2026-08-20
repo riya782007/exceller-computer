@@ -28,22 +28,15 @@ CREATE POLICY "admin_full_access_chat_sessions"
   ON chat_sessions
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Technicians: read access (for viewing escalated messages)
 CREATE POLICY "technicians_read_chat_sessions"
   ON chat_sessions
   FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
-  );
+  USING (public.is_technician());
 
 -- Updated_at trigger
 CREATE TRIGGER update_chat_sessions_updated_at

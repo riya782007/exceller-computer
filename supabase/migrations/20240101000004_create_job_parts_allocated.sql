@@ -26,11 +26,8 @@ CREATE POLICY "admin_full_access_allocations"
   ON job_parts_allocated
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'
-    )
-  );
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
 
 -- Technicians: read and create allocations for their jobs
 CREATE POLICY "technicians_read_allocations"
@@ -38,9 +35,7 @@ CREATE POLICY "technicians_read_allocations"
   FOR SELECT
   TO authenticated
   USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
+    public.is_technician()
     AND EXISTS (
       SELECT 1 FROM repair_jobs j WHERE j.id = job_id AND j.technician_id = auth.uid()
     )
@@ -50,12 +45,7 @@ CREATE POLICY "technicians_create_allocations"
   ON job_parts_allocated
   FOR INSERT
   TO authenticated
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'technician'
-    )
-    AND allocated_by = auth.uid()
-  );
+  WITH CHECK (public.is_technician() AND allocated_by = auth.uid());
 
 -- Atomic part allocation function
 -- This ensures stock check + allocation + deduction happen in one transaction
