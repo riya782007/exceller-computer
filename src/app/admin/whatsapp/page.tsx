@@ -90,7 +90,7 @@ export default async function WhatsAppPage() {
                     {session.phone_number}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                    {(session.customer as { full_name: string } | null)?.full_name || 'Unknown'}
+                    {(session.customer as unknown as { full_name: string } | null)?.full_name || 'Unknown'}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium capitalize ${getBotStateColor(session.bot_state)}`}>

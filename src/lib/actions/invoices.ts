@@ -341,6 +341,7 @@ export async function regenerateInvoicePdf(
         payment_status,
         notes,
         job_id,
+        created_at,
         customer:profiles!invoices_customer_id_fkey(full_name, email, phone, address),
         job:repair_jobs!invoices_job_id_fkey(job_card_number)
       `)
@@ -363,8 +364,8 @@ export async function regenerateInvoicePdf(
     }
 
     // Build PDF data
-    const customerData = invoice.customer as { full_name: string; email: string | null; phone: string | null; address: string | null } | null
-    const jobData = invoice.job as { job_card_number: string } | null
+    const customerData = invoice.customer as unknown as { full_name: string; email: string | null; phone: string | null; address: string | null } | null
+    const jobData = invoice.job as unknown as { job_card_number: string } | null
 
     const pdfData: InvoicePdfData = {
       invoiceNumber: invoice.invoice_number,

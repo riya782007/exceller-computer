@@ -88,10 +88,10 @@ export default async function JobsPage() {
                     <div className="text-xs text-gray-500 truncate max-w-[200px]">{job.reported_fault}</div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                    {(job.customer as { full_name: string } | null)?.full_name || '—'}
+                    {(job.customer as unknown as { full_name: string } | null)?.full_name || '—'}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                    {(job.technician as { full_name: string } | null)?.full_name || 'Unassigned'}
+                    {(job.technician as unknown as { full_name: string } | null)?.full_name || 'Unassigned'}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(job.status)}`}>

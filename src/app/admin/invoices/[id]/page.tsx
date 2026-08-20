@@ -50,8 +50,8 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
     .eq('invoice_id', id)
     .order('created_at', { ascending: true })
 
-  const customer = invoice.customer as { id: string; full_name: string; email: string | null; phone: string | null; address: string | null } | null
-  const job = invoice.job as { id: string; job_card_number: string; device_brand: string; device_model: string | null; status: string } | null
+  const customer = invoice.customer as unknown as { id: string; full_name: string; email: string | null; phone: string | null; address: string | null } | null
+  const job = invoice.job as unknown as { id: string; job_card_number: string; device_brand: string; device_model: string | null; status: string } | null
 
   const getPaymentStatusColor = (status: string): string => {
     switch (status) {

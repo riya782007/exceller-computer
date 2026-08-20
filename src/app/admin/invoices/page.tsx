@@ -103,7 +103,7 @@ export default async function InvoicesPage() {
                     </a>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                    {(invoice.customer as { full_name: string } | null)?.full_name || '—'}
+                    {(invoice.customer as unknown as { full_name: string } | null)?.full_name || '—'}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="inline-flex rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
