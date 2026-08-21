@@ -18,8 +18,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             <Link href="/estimator" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Price Estimator
             </Link>
-            <Link href="/catalog" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
-              Refurbished Laptops
+            <Link href="/locations" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
+              Service Areas
             </Link>
             <Link href="/contact" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
               Contact
@@ -58,9 +58,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             <div>
               <h4 className="text-sm font-semibold text-gray-900">Services</h4>
               <ul className="mt-2 space-y-2 text-sm text-gray-600">
-                <li><Link href="/services/laptop-repair" className="hover:text-brand-600">Laptop Repair</Link></li>
-                <li><Link href="/services/screen-replacement" className="hover:text-brand-600">Screen Replacement</Link></li>
-                <li><Link href="/services/motherboard-repair" className="hover:text-brand-600">Motherboard Repair</Link></li>
+                <li><Link href="/services/laptop-screen-replacement" className="hover:text-brand-600">Screen Replacement</Link></li>
+                <li><Link href="/services/laptop-battery-replacement" className="hover:text-brand-600">Battery Replacement</Link></li>
+                <li><Link href="/services/laptop-motherboard-repair" className="hover:text-brand-600">Motherboard Repair</Link></li>
                 <li><Link href="/services/data-recovery" className="hover:text-brand-600">Data Recovery</Link></li>
               </ul>
             </div>
@@ -68,7 +68,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
               <h4 className="text-sm font-semibold text-gray-900">Quick Links</h4>
               <ul className="mt-2 space-y-2 text-sm text-gray-600">
                 <li><Link href="/estimator" className="hover:text-brand-600">Get Repair Estimate</Link></li>
-                <li><Link href="/catalog" className="hover:text-brand-600">Refurbished Laptops</Link></li>
+                <li><Link href="/locations" className="hover:text-brand-600">Service Areas</Link></li>
                 <li><Link href="/about" className="hover:text-brand-600">About Us</Link></li>
                 <li><Link href="/contact" className="hover:text-brand-600">Contact</Link></li>
               </ul>

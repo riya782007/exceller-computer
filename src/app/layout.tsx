@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
+import { siteUrl } from '@/lib/constants'
 import '@/styles/globals.css'
 
 export const metadata: Metadata = {
+  // Required for the relative `alternates.canonical` values used on the public
+  // pages to resolve to absolute URLs. Without it Next emits a warning and
+  // canonicals resolve against localhost.
+  metadataBase: new URL(siteUrl()),
   title: {
     default: 'Exeller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
     template: '%s | Exeller Computer',
