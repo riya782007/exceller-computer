@@ -1,7 +1,22 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database'
 import { formatCurrency, formatDate } from '@/lib/utils'
+
+type InvoiceListRow = Pick<
+  Database['public']['Tables']['invoices']['Row'],
+  | 'id'
+  | 'invoice_number'
+  | 'subtotal'
+  | 'total'
+  | 'tax_type'
+  | 'payment_status'
+  | 'pdf_url'
+  | 'created_at'
+> & {
+  customer: Pick<Database['public']['Tables']['profiles']['Row'], 'full_name'> | null
+}
 
 export const metadata: Metadata = {
   title: 'Invoices',
@@ -34,6 +49,8 @@ export default async function InvoicesPage() {
     )
   }
 
+  const invoiceRows: InvoiceListRow[] = invoices ?? []
+
   const getPaymentStatusColor = (status: string): string => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800'
@@ -45,9 +62,9 @@ export default async function InvoicesPage() {
   }
 
   // Summary stats
-  const totalRevenue = invoices?.reduce((sum, inv) => inv.payment_status === 'paid' ? sum + inv.total : sum, 0) ?? 0
-  const pendingAmount = invoices?.reduce((sum, inv) => inv.payment_status === 'pending' ? sum + inv.total : sum, 0) ?? 0
-  const invoiceCount = invoices?.length ?? 0
+  const totalRevenue = invoiceRows.reduce((sum, invoice) => invoice.payment_status === 'paid' ? sum + invoice.total : sum, 0)
+  const pendingAmount = invoiceRows.reduce((sum, invoice) => invoice.payment_status === 'pending' ? sum + invoice.total : sum, 0)
+  const invoiceCount = invoiceRows.length
 
   return (
     <div>
@@ -95,8 +112,8 @@ export default async function InvoicesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {invoices && invoices.length > 0 ? (
-              invoices.map((invoice) => (
+            {invoiceRows.length > 0 ? (
+              invoiceRows.map((invoice) => (
                 <tr key={invoice.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3">
                     <Link href={`/admin/invoices/${invoice.id}`} className="font-medium text-brand-600 hover:text-brand-800">
@@ -104,7 +121,7 @@ export default async function InvoicesPage() {
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
-                    {(invoice.customer as unknown as { full_name: string } | null)?.full_name || '—'}
+                    {invoice.customer?.full_name || '—'}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="inline-flex rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
