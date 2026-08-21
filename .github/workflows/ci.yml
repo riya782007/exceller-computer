@@ -1,0 +1,47 @@
+name: CI
+
+# Runs the three checks that have caused every failed Vercel deploy so far:
+# type-check, lint, and build. GitHub Actions has npm registry access, so it
+# catches these in ~2 minutes instead of after a failed deploy.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Catches what tsc cannot: <Link> hrefs pointing at routes that do not
+      # exist, stale brand strings, unescaped JSX entities.
+      - name: Static checks
+        run: node scripts/static-check.mjs
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx next lint
+
+      - name: Unit tests
+        run: npx vitest run
+
+      # Placeholder values: the build only needs these to exist, since pages
+      # that touch Supabase are dynamic and are not prerendered at build time.
+      - name: Build
+        run: npx next build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-service-key
