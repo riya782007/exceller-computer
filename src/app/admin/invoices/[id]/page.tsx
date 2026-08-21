@@ -2,8 +2,42 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { InvoiceActions } from './invoice-actions'
+
+type InvoiceRow = Pick<
+  Database['public']['Tables']['invoices']['Row'],
+  | 'id'
+  | 'invoice_number'
+  | 'subtotal'
+  | 'tax_type'
+  | 'cgst'
+  | 'sgst'
+  | 'igst'
+  | 'total'
+  | 'payment_status'
+  | 'pdf_url'
+  | 'notes'
+  | 'created_at'
+  | 'updated_at'
+>
+type InvoiceCustomer = Pick<
+  Database['public']['Tables']['profiles']['Row'],
+  'id' | 'full_name' | 'email' | 'phone' | 'address'
+>
+type InvoiceJob = Pick<
+  Database['public']['Tables']['repair_jobs']['Row'],
+  'id' | 'job_card_number' | 'device_brand' | 'device_model' | 'status'
+>
+type InvoiceDetail = InvoiceRow & {
+  customer: InvoiceCustomer | null
+  job: InvoiceJob | null
+}
+type InvoiceItem = Pick<
+  Database['public']['Tables']['invoice_items']['Row'],
+  'id' | 'description' | 'quantity' | 'unit_price' | 'hsn_sac' | 'amount'
+>
 
 export const metadata: Metadata = {
   title: 'Invoice Detail',
@@ -51,8 +85,12 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
     .eq('invoice_id', id)
     .order('created_at', { ascending: true })
 
-  const customer = invoice.customer as unknown as { id: string; full_name: string; email: string | null; phone: string | null; address: string | null } | null
-  const job = invoice.job as unknown as { id: string; job_card_number: string; device_brand: string; device_model: string | null; status: string } | null
+  // Make the selected database contract explicit. This keeps the admin route
+  // type-safe until live Supabase type generation is available in CI.
+  const invoiceRow: InvoiceDetail = invoice
+  const invoiceItems: InvoiceItem[] = items ?? []
+  const customer = invoiceRow.customer
+  const job = invoiceRow.job
 
   const getPaymentStatusColor = (status: string): string => {
     switch (status) {
@@ -70,19 +108,19 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{invoice.invoice_number}</h1>
-            <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium capitalize ${getPaymentStatusColor(invoice.payment_status)}`}>
-              {invoice.payment_status}
+            <h1 className="text-2xl font-bold text-gray-900">{invoiceRow.invoice_number}</h1>
+            <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium capitalize ${getPaymentStatusColor(invoiceRow.payment_status)}`}>
+              {invoiceRow.payment_status}
             </span>
           </div>
           <p className="mt-1 text-sm text-gray-500">
-            Created {formatDateTime(invoice.created_at)}
+            Created {formatDateTime(invoiceRow.created_at)}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {invoice.pdf_url && (
+          {invoiceRow.pdf_url && (
             <a
-              href={invoice.pdf_url}
+              href={invoiceRow.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
@@ -91,9 +129,9 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
             </a>
           )}
           <InvoiceActions
-            invoiceId={invoice.id}
-            currentStatus={invoice.payment_status}
-            hasPdf={!!invoice.pdf_url}
+            invoiceId={invoiceRow.id}
+            currentStatus={invoiceRow.payment_status}
+            hasPdf={!!invoiceRow.pdf_url}
           />
         </div>
       </div>
@@ -119,7 +157,7 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {items?.map((item, index) => (
+                  {invoiceItems.map((item, index) => (
                     <tr key={item.id}>
                       <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">{index + 1}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{item.description}</td>
@@ -139,28 +177,28 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
                 <div className="w-64 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium text-gray-900">{formatCurrency(invoice.subtotal)}</span>
+                    <span className="font-medium text-gray-900">{formatCurrency(invoiceRow.subtotal)}</span>
                   </div>
-                  {invoice.tax_type === 'intra_state' ? (
+                  {invoiceRow.tax_type === 'intra_state' ? (
                     <>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">CGST @ 9%</span>
-                        <span className="text-gray-900">{formatCurrency(invoice.cgst)}</span>
+                        <span className="text-gray-900">{formatCurrency(invoiceRow.cgst)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">SGST @ 9%</span>
-                        <span className="text-gray-900">{formatCurrency(invoice.sgst)}</span>
+                        <span className="text-gray-900">{formatCurrency(invoiceRow.sgst)}</span>
                       </div>
                     </>
                   ) : (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">IGST @ 18%</span>
-                      <span className="text-gray-900">{formatCurrency(invoice.igst)}</span>
+                      <span className="text-gray-900">{formatCurrency(invoiceRow.igst)}</span>
                     </div>
                   )}
                   <div className="flex justify-between border-t pt-2">
                     <span className="text-base font-bold text-gray-900">Total</span>
-                    <span className="text-base font-bold text-brand-700">{formatCurrency(invoice.total)}</span>
+                    <span className="text-base font-bold text-brand-700">{formatCurrency(invoiceRow.total)}</span>
                   </div>
                 </div>
               </div>
@@ -168,10 +206,10 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
           </div>
 
           {/* Notes */}
-          {invoice.notes && (
+          {invoiceRow.notes && (
             <div className="rounded-lg border bg-white p-6 shadow-sm">
               <h3 className="mb-2 text-sm font-semibold text-gray-900">Notes</h3>
-              <p className="text-sm text-gray-600 whitespace-pre-wrap">{invoice.notes}</p>
+              <p className="text-sm text-gray-600 whitespace-pre-wrap">{invoiceRow.notes}</p>
             </div>
           )}
         </div>
@@ -213,19 +251,19 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-gray-500">Tax Type</dt>
-                <dd className="font-medium text-gray-900 capitalize">{invoice.tax_type.replace('_', '-')}</dd>
+                <dd className="font-medium text-gray-900 capitalize">{invoiceRow.tax_type.replace('_', '-')}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-500">Created</dt>
-                <dd className="text-gray-900">{formatDate(invoice.created_at)}</dd>
+                <dd className="text-gray-900">{formatDate(invoiceRow.created_at)}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-500">Last Updated</dt>
-                <dd className="text-gray-900">{formatDate(invoice.updated_at)}</dd>
+                <dd className="text-gray-900">{formatDate(invoiceRow.updated_at)}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-500">PDF</dt>
-                <dd className="text-gray-900">{invoice.pdf_url ? '✅ Available' : '❌ Not generated'}</dd>
+                <dd className="text-gray-900">{invoiceRow.pdf_url ? '✅ Available' : '❌ Not generated'}</dd>
               </div>
             </dl>
           </div>
