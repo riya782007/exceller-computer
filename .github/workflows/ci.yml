@@ -23,6 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      # Catches what tsc cannot: <Link> hrefs pointing at routes that do not
+      # exist, stale brand strings, unescaped JSX entities.
+      - name: Static checks
+        run: node scripts/static-check.mjs
+
       - name: Type check
         run: npx tsc --noEmit
 
