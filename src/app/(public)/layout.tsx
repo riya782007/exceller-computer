@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { BUSINESS, whatsappLink } from '@/lib/constants'
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -8,7 +9,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-brand-700">Exceller Computer</span>
+            <span className="text-xl font-bold text-brand-700">{BUSINESS.name}</span>
           </Link>
           <nav className="hidden items-center space-x-6 md:flex">
             <Link href="/services" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
@@ -24,7 +25,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
               Contact
             </Link>
             <a
-              href="https://wa.me/919999999999"
+              href={whatsappLink('Hi, I need help with my laptop.')}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-full bg-whatsapp px-4 py-2 text-sm font-medium text-white hover:bg-whatsapp-dark transition-colors"
@@ -49,9 +50,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Exceller Computer</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{BUSINESS.name}</h3>
               <p className="mt-2 text-sm text-gray-600">
-                Exceller Infosolutions LLP — Expert laptop &amp; computer repair services in New Delhi.
+                {BUSINESS.legalName} — Expert laptop &amp; computer repair services in New Delhi.
               </p>
             </div>
             <div>
@@ -78,23 +79,27 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 <p>Opp. Dwarka Mor Metro Station Gate No. 2</p>
                 <p>Sewak Park, New Delhi – 110059</p>
                 <p className="mt-3">
-                  <a href="tel:+919999999999" className="hover:text-brand-600">+91 99999 99999</a>
+                  <a href={`tel:${BUSINESS.phone}`} className="hover:text-brand-600">
+                    {BUSINESS.phoneDisplay}
+                  </a>
                 </p>
                 <p>
-                  <a href="mailto:info@excellercomputer.in" className="hover:text-brand-600">info@excellercomputer.in</a>
+                  <a href={`mailto:${BUSINESS.email}`} className="hover:text-brand-600">
+                    {BUSINESS.email}
+                  </a>
                 </p>
               </address>
             </div>
           </div>
           <div className="mt-8 border-t pt-8 text-center text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} Exceller Infosolutions LLP. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {BUSINESS.legalName}. All rights reserved.</p>
           </div>
         </div>
       </footer>
 
       {/* WhatsApp floating button */}
       <a
-        href="https://wa.me/919999999999"
+        href={whatsappLink('Hi, I need help with my laptop.')}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp shadow-lg hover:bg-whatsapp-dark transition-colors"

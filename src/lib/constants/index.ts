@@ -1,10 +1,29 @@
 /**
- * Business constants for Exceller Computer / Exceller Infosolutions LLP
+ * Business constants for Exeller Computer / Exeller Infosolutions LLP
  */
 
+/**
+ * ⚠️  LEGAL NAME — REQUIRES OWNER CONFIRMATION
+ *
+ * `legalName` is printed on GST tax invoices, which are legal documents, and it
+ * must match the GST registration character-for-character.
+ *
+ * Evidence used for the current value:
+ *   - live site domain is exellercomputer.com
+ *   - the site title reads "Exeller Computer"
+ *   - the operational research names the entity "Exeller Infosolutions LLP"
+ * i.e. "Exeller" — one L, no C. The earlier code in this repo said "Exceller",
+ * which contradicts both sources and is very likely wrong.
+ *
+ * Confirm against the GST certificate before issuing a single real invoice.
+ * At runtime these values are overridden by the `business.*` rows in
+ * `app_settings`, so the fix is a database update, not a redeploy.
+ */
 export const BUSINESS = {
-  name: 'Exceller Computer',
-  legalName: 'Exceller Infosolutions LLP',
+  /** Customer-facing brand name */
+  name: 'Exeller Computer',
+  /** Registered entity — must match GST registration exactly */
+  legalName: 'Exeller Infosolutions LLP',
   address: {
     street: 'Opp. Dwarka Mor Metro Station Gate No. 2',
     area: 'Sewak Park',
@@ -13,15 +32,31 @@ export const BUSINESS = {
     pincode: '110059',
     country: 'India',
   },
-  phone: '+919999999999', // TODO: Replace with actual phone number
-  email: 'info@excellercomputer.in',
-  website: 'https://excellercomputer.in',
+  /** Display / tel: format */
+  phone: '+919718828173',
+  /** Digits only — required by wa.me links */
+  whatsapp: '919718828173',
+  /** Human-readable, for on-page display */
+  phoneDisplay: '+91 97188 28173',
+  email: 'info@exellercomputer.com',
+  website: 'https://exellercomputer.com',
   hours: {
     weekday: '10:00 AM – 8:00 PM',
     weekend: 'Closed (Sunday)',
   },
-  gst: '', // TODO: Add GST number when available
+  /** GSTIN — REQUIRED on tax invoices. Set via app_settings.'business.gstin'. */
+  gst: '',
 } as const
+
+/**
+ * Build a wa.me deep link with a prefilled message.
+ * Always use this rather than hardcoding the number, so a number change is a
+ * one-line edit.
+ */
+export function whatsappLink(message?: string): string {
+  const base = `https://wa.me/${BUSINESS.whatsapp}`
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base
+}
 
 /**
  * Repair estimator price ranges (in INR)

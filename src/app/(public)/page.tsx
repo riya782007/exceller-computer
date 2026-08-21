@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { BUSINESS, whatsappLink } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'Exceller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
+  title: 'Exeller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
   description:
     'Expert laptop and computer repair services near Dwarka Mor Metro Station, New Delhi. Component-level motherboard repair, screen replacement, refurbished business laptops. Same-day service.',
 }
@@ -29,7 +30,7 @@ export default function HomePage() {
               Get Repair Estimate
             </Link>
             <a
-              href="https://wa.me/919999999999?text=Hi%2C%20I%20need%20help%20with%20my%20laptop"
+              href={whatsappLink('Hi, I need help with my laptop.')}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-lg bg-whatsapp px-8 py-3 text-base font-medium text-white shadow-sm hover:bg-whatsapp-dark transition-colors"
@@ -67,7 +68,7 @@ export default function HomePage() {
       {/* Why Choose Us */}
       <section className="bg-gray-50 py-16 lg:py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold text-gray-900">Why Choose Exceller?</h2>
+          <h2 className="text-center text-3xl font-bold text-gray-900">Why Choose Exeller?</h2>
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
               <div key={feature.title} className="text-center">
@@ -103,7 +104,9 @@ export default function HomePage() {
                 <p className="flex items-start gap-3">
                   <span className="text-xl">📞</span>
                   <span>
-                    <a href="tel:+919999999999" className="hover:text-brand-600">+91 99999 99999</a>
+                    <a href={`tel:${BUSINESS.phone}`} className="hover:text-brand-600">
+                      {BUSINESS.phoneDisplay}
+                    </a>
                   </span>
                 </p>
               </div>
@@ -124,18 +127,18 @@ export default function HomePage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': ['LocalBusiness', 'ComputerStore'],
-            name: 'Exceller Computer',
-            alternateName: 'Exceller Infosolutions LLP',
+            name: BUSINESS.name,
+            alternateName: BUSINESS.legalName,
             description:
               'Expert laptop and computer repair services. Component-level repair, refurbished business laptops, spare parts and accessories.',
-            url: 'https://excellercomputer.in',
-            telephone: '+919999999999',
+            url: BUSINESS.website,
+            telephone: BUSINESS.phone,
             address: {
               '@type': 'PostalAddress',
-              streetAddress: 'Opp. Dwarka Mor Metro Station Gate No. 2, Sewak Park',
-              addressLocality: 'New Delhi',
-              addressRegion: 'Delhi',
-              postalCode: '110059',
+              streetAddress: `${BUSINESS.address.street}, ${BUSINESS.address.area}`,
+              addressLocality: BUSINESS.address.city,
+              addressRegion: BUSINESS.address.state,
+              postalCode: BUSINESS.address.pincode,
               addressCountry: 'IN',
             },
             geo: {
@@ -152,7 +155,11 @@ export default function HomePage() {
               },
             ],
             priceRange: '₹₹',
-            image: 'https://excellercomputer.in/og-image.jpg',
+            image: `${BUSINESS.website}/og-image.jpg`,
+            areaServed: [
+              'Dwarka', 'Dwarka Mor', 'Uttam Nagar', 'Janakpuri',
+              'Najafgarh', 'Malviya Nagar', 'Gurgaon', 'Noida',
+            ],
             sameAs: [],
           }),
         }}

@@ -43,7 +43,7 @@ export function AdminSidebar({ userRole, userName }: AdminSidebarProps) {
       {/* Logo area */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         {!collapsed && (
-          <span className="text-lg font-bold text-brand-700">Exceller ERP</span>
+          <span className="text-lg font-bold text-brand-700">Exeller ERP</span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
