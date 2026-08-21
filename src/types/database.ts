@@ -26,6 +26,10 @@ export type TaxType = 'intra_state' | 'inter_state'
 
 export type PaymentStatus = 'pending' | 'paid' | 'partial' | 'cancelled'
 
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'converted' | 'lost'
+
+export type MsgChannel = 'whatsapp' | 'sms' | 'email' | 'in_app'
+
 export interface Database {
   public: {
     Tables: {
@@ -413,6 +417,84 @@ export interface Database {
           }
         ]
       }
+      // Added by hand so the estimator lead-capture action compiles.
+      // `npm run gen:types` will supersede this along with the other 22 tables
+      // from SETUP_PART_B.sql once that migration has been applied.
+      leads: {
+        Row: {
+          id: string
+          full_name: string | null
+          phone: string
+          email: string | null
+          city: string | null
+          locality: string | null
+          device_type: string | null
+          brand: string | null
+          issue_summary: string | null
+          service_interest: string | null
+          estimated_value: number | null
+          source: string | null
+          channel: MsgChannel | null
+          status: LeadStatus
+          assigned_to: string | null
+          converted_customer_id: string | null
+          converted_job_id: string | null
+          lost_reason: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          full_name?: string | null
+          phone: string
+          email?: string | null
+          city?: string | null
+          locality?: string | null
+          device_type?: string | null
+          brand?: string | null
+          issue_summary?: string | null
+          service_interest?: string | null
+          estimated_value?: number | null
+          source?: string | null
+          channel?: MsgChannel | null
+          status?: LeadStatus
+          assigned_to?: string | null
+          converted_customer_id?: string | null
+          converted_job_id?: string | null
+          lost_reason?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          full_name?: string | null
+          phone?: string
+          email?: string | null
+          city?: string | null
+          locality?: string | null
+          device_type?: string | null
+          brand?: string | null
+          issue_summary?: string | null
+          service_interest?: string | null
+          estimated_value?: number | null
+          source?: string | null
+          channel?: MsgChannel | null
+          status?: LeadStatus
+          assigned_to?: string | null
+          converted_customer_id?: string | null
+          converted_job_id?: string | null
+          lost_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'leads_assigned_to_fkey'
+            columns: ['assigned_to']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -447,6 +529,8 @@ export interface Database {
       bot_state: BotState
       tax_type: TaxType
       payment_status: PaymentStatus
+      lead_status: LeadStatus
+      msg_channel: MsgChannel
     }
     CompositeTypes: {
       [_ in never]: never

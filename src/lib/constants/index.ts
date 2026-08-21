@@ -59,6 +59,21 @@ export function whatsappLink(message?: string): string {
 }
 
 /**
+ * Absolute base URL for canonicals, sitemap and structured data.
+ *
+ * Prefers NEXT_PUBLIC_APP_URL so preview deployments emit their own URLs rather
+ * than claiming to be the production domain, which would make previews compete
+ * with production in search results.
+ */
+export function siteUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_APP_URL
+  if (configured && configured.trim() !== '') {
+    return configured.trim().replace(/\/+$/, '')
+  }
+  return BUSINESS.website
+}
+
+/**
  * Repair estimator price ranges (in INR)
  * These are estimates — final price determined after diagnosis.
  */
