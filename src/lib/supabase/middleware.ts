@@ -9,12 +9,25 @@ import { getSupabasePublicEnv } from './env'
  * public pages never pay for an auth round-trip and remain available even if
  * Supabase is unconfigured.
  */
-export async function updateSession(request: NextRequest): Promise<NextResponse> {
-  const { url: supabaseUrl, anonKey } = getSupabasePublicEnv()
+interface SessionOptions {
+  /** Treat the request as protected even when it is rewritten from a clean admin subdomain path. */
+  protect?: boolean
+  /** Internally render this path while preserving the browser URL. */
+  rewritePath?: string
+}
 
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+export async function updateSession(
+  request: NextRequest,
+  options: SessionOptions = {}
+): Promise<NextResponse> {
+  const { url: supabaseUrl, anonKey } = getSupabasePublicEnv()
+  const rewriteUrl = options.rewritePath
+    ? new URL(options.rewritePath, request.url)
+    : undefined
+
+  let supabaseResponse = rewriteUrl
+    ? NextResponse.rewrite(rewriteUrl, { request })
+    : NextResponse.next({ request })
 
   const supabase = createServerClient(supabaseUrl, anonKey, {
     cookies: {
@@ -23,9 +36,9 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-        supabaseResponse = NextResponse.next({
-          request,
-        })
+        supabaseResponse = rewriteUrl
+          ? NextResponse.rewrite(rewriteUrl, { request })
+          : NextResponse.next({ request })
         cookiesToSet.forEach(({ name, value, options }) =>
           supabaseResponse.cookies.set(name, value, options)
         )
@@ -40,10 +53,10 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user && request.nextUrl.pathname.startsWith('/admin')) {
+  if (!user && (options.protect || request.nextUrl.pathname.startsWith('/admin'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    url.searchParams.set('redirect', request.nextUrl.pathname)
+    url.searchParams.set('redirect', options.rewritePath ?? request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
