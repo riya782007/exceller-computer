@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'z'
+import { z } from 'zod'
 import {
   createRepairJobSchema,
   transitionJobStatusSchema,
