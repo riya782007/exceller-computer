@@ -99,10 +99,11 @@ export function VisitorChat() {
 
   useEffect(() => {
     if (!open) return
-    const dialog = dialogRef.current
-    if (!dialog) return
+    const dialogNode = dialogRef.current
+    if (dialogNode === null) return
+    const activeDialog: HTMLElement = dialogNode
     const focusableSelector = 'a[href], button:not([disabled]), select:not([disabled]), textarea:not([disabled]), input:not([disabled])'
-    const frame = window.requestAnimationFrame(() => dialog.querySelector<HTMLElement>('[data-dialog-initial-focus]')?.focus())
+    const frame = window.requestAnimationFrame(() => activeDialog.querySelector<HTMLElement>('[data-dialog-initial-focus]')?.focus())
 
     function constrainFocus(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -112,7 +113,7 @@ export function VisitorChat() {
         return
       }
       if (event.key !== 'Tab') return
-      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector))
+      const focusable = Array.from(activeDialog.querySelectorAll<HTMLElement>(focusableSelector))
       if (focusable.length === 0) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
