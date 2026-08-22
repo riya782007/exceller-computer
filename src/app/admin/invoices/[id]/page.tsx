@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/database'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
+import { IconReceipt } from '@/components/admin/icons'
 import { InvoiceActions } from './invoice-actions'
 
 type InvoiceRow = Pick<
@@ -125,7 +126,8 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
               rel="noopener noreferrer"
               className="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
             >
-              📄 Download PDF
+              <IconReceipt className="mr-2 h-4 w-4" />
+              Download PDF
             </a>
           )}
           <InvoiceActions
@@ -263,7 +265,9 @@ export default async function InvoiceDetailPage({ params }: InvoiceDetailPagePro
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-500">PDF</dt>
-                <dd className="text-gray-900">{invoiceRow.pdf_url ? '✅ Available' : '❌ Not generated'}</dd>
+                <dd className={invoiceRow.pdf_url ? 'font-medium text-emerald-700' : 'font-medium text-slate-500'}>
+                  {invoiceRow.pdf_url ? 'Available' : 'Not generated'}
+                </dd>
               </div>
             </dl>
           </div>

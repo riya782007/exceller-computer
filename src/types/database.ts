@@ -223,7 +223,7 @@ export interface Database {
           item_id: string
           quantity: number
           unit_price: number
-          allocated_by: string
+          allocated_by: string | null
           allocated_at: string
           created_at: string
         }
@@ -233,7 +233,7 @@ export interface Database {
           item_id: string
           quantity: number
           unit_price: number
-          allocated_by: string
+          allocated_by?: string | null
           allocated_at?: string
           created_at?: string
         }
@@ -242,7 +242,7 @@ export interface Database {
           item_id?: string
           quantity?: number
           unit_price?: number
-          allocated_by?: string
+          allocated_by?: string | null
           allocated_at?: string
         }
         Relationships: [
@@ -426,7 +426,7 @@ export interface Database {
           size_bytes: number
           alt_text: string | null
           purpose: string
-          created_by: string
+          created_by: string | null
           created_at: string
         }
         Insert: {
@@ -437,7 +437,7 @@ export interface Database {
           size_bytes: number
           alt_text?: string | null
           purpose?: string
-          created_by: string
+          created_by?: string | null
           created_at?: string
         }
         Update: {
@@ -661,7 +661,7 @@ export interface Database {
           p_job_id: string
           p_item_id: string
           p_quantity: number
-          p_allocated_by: string
+          p_allocated_by: string | null
         }
         Returns: string
       }
@@ -669,7 +669,9 @@ export interface Database {
         Args: {
           p_job_id: string
           p_new_status: JobStatus
-          p_user_id: string
+          // Null when the owner is signed in with the console access code
+          // rather than a provisioned Supabase staff account.
+          p_user_id: string | null
         }
         Returns: boolean
       }

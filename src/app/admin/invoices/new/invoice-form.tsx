@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createInvoice, type InvoiceInput } from '@/lib/actions/invoices'
+import { IconCheck, IconClose, IconReceipt } from '@/components/admin/icons'
 import { calculateLineAmount, calculateSubtotal, calculateTax } from '@/lib/utils/tax-engine'
 import { formatCurrency } from '@/lib/utils'
 import type { TaxType } from '@/types'
@@ -145,7 +146,7 @@ export function InvoiceForm({ customers, jobs }: InvoiceFormProps) {
       <div className="max-w-2xl rounded-lg border bg-white p-8 shadow-sm">
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <span className="text-3xl">✅</span>
+            <IconCheck className="h-7 w-7 text-green-700" />
           </div>
           <h2 className="mt-4 text-xl font-semibold text-gray-900">Invoice Created</h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -153,7 +154,7 @@ export function InvoiceForm({ customers, jobs }: InvoiceFormProps) {
           </p>
           {success.warning && (
             <div className="mt-4 rounded-md bg-amber-50 p-3 text-sm text-amber-700">
-              ⚠️ {success.warning}
+              {success.warning}
             </div>
           )}
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -164,7 +165,8 @@ export function InvoiceForm({ customers, jobs }: InvoiceFormProps) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
               >
-                📄 Download PDF
+                <IconReceipt className="mr-2 h-4 w-4" />
+                Download PDF
               </a>
             )}
             <button
@@ -382,7 +384,7 @@ export function InvoiceForm({ customers, jobs }: InvoiceFormProps) {
                   disabled={loading || items.length <= 1}
                   aria-label="Remove item"
                 >
-                  ✕
+                  <IconClose className="h-4 w-4" />
                 </button>
               </div>
             </div>
