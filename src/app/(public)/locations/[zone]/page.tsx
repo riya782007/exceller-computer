@@ -15,7 +15,7 @@ import {
   getOrderedZones,
   type ServiceZone,
 } from '@/lib/catalog/zones'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { BUSINESS, whatsappLink, siteUrl } from '@/lib/constants'
 
 interface PageProps {
   params: Promise<{ zone: string }>
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: `Laptop Repair in ${zone.name} | Exeller Computer`,
       description,
-      url: `${BUSINESS.website}/locations/${zone.slug}`,
+      url: `${siteUrl()}/locations/${zone.slug}`,
     },
   }
 }
@@ -114,7 +114,7 @@ export default async function ZonePage({ params }: PageProps) {
             '@type': ['LocalBusiness', 'ComputerStore'],
             name: `${BUSINESS.name} — ${zone.name}`,
             description: `Laptop and computer repair serving ${zone.name}, ${zone.city}, with free doorstep collection and delivery.`,
-            url: `${BUSINESS.website}/locations/${zone.slug}`,
+            url: `${siteUrl()}/locations/${zone.slug}`,
             telephone: BUSINESS.phone,
             priceRange: '₹₹',
             address: {

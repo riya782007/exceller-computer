@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BUSINESS } from '@/lib/constants'
+import { IconArrowLeft } from '@/components/marketing/icons'
 
 export const metadata: Metadata = {
   title: 'Visitor chat privacy',
@@ -12,7 +13,7 @@ export default function PrivacyPage() {
   return (
     <div className="bg-slate-50 py-12 sm:py-16">
       <article className="container mx-auto max-w-3xl rounded-3xl bg-white px-6 py-8 shadow-sm ring-1 ring-slate-200 sm:px-10 sm:py-12">
-        <Link href="/" className="text-sm font-bold text-brand-700 hover:text-brand-900">← Back to Exeller Computer</Link>
+        <Link href="/" className="text-sm font-bold text-brand-700 hover:text-brand-900"><IconArrowLeft className="mr-1.5 inline h-3.5 w-3.5 align-[-2px]" />Back to Exeller Computer</Link>
         <p className="mt-8 text-sm font-bold uppercase tracking-[0.16em] text-brand-700">Visitor chat privacy</p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950">How Exeller Assist handles your chat.</h1>
         <div className="mt-8 space-y-6 text-sm leading-7 text-slate-700">

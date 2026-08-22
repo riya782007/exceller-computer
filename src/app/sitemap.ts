@@ -46,6 +46,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+    // Indexable and linked from the footer, so it belongs here rather than
+    // being an orphaned page crawlers find only via the chat widget.
+    {
+      url: `${base}/privacy`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.2,
+    },
   ]
 
   const serviceRoutes: MetadataRoute.Sitemap = SERVICES.filter(

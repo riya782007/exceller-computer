@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { captureLead } from '@/lib/actions/leads'
+import { MOBILE_HINT, isValidIndianMobile, normaliseIndianMobile } from '@/lib/utils/indian-mobile'
 import { buttonClasses } from '@/components/ui/button'
 
 interface ContactFormProps {
@@ -21,16 +22,15 @@ export function ContactForm({ whatsappBase }: ContactFormProps) {
     event.preventDefault()
     setError(null)
 
-    const digits = phone.replace(/\D/g, '')
-    if (digits.length < 10) {
-      setError('Please enter your 10-digit mobile number so we can reach you.')
+    if (!isValidIndianMobile(phone)) {
+      setError(MOBILE_HINT)
       return
     }
 
     setSending(true)
     const result = await captureLead({
       full_name: name,
-      phone,
+      phone: normaliseIndianMobile(phone),
       locality,
       issue_summary: message,
       source: 'website_contact',
@@ -87,7 +87,11 @@ export function ContactForm({ whatsappBase }: ContactFormProps) {
       </p>
 
       {error ? (
-        <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div
+          id="contact-error"
+          role="alert"
+          className="mt-4 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700"
+        >
           {error}
         </div>
       ) : null}
@@ -119,6 +123,8 @@ export function ContactForm({ whatsappBase }: ContactFormProps) {
             required
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
+            aria-invalid={error !== null}
+            aria-describedby={error ? 'contact-error' : undefined}
             placeholder="10-digit mobile number"
             className="mt-1.5 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />

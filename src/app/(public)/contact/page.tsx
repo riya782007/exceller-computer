@@ -3,7 +3,7 @@ import { Container, Section, SectionHeading } from '@/components/ui/layout'
 import { ButtonAnchor, ButtonLink } from '@/components/ui/button'
 import { Breadcrumbs, BreadcrumbsJsonLd } from '@/components/marketing/breadcrumbs'
 import { getOrderedZones } from '@/lib/catalog/zones'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { BUSINESS, whatsappLink, siteUrl } from '@/lib/constants'
 import { ContactForm } from './contact-form'
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: 'Contact Exeller Computer',
     description:
       'Workshop at Dwarka Mor, New Delhi. Call, WhatsApp or book free doorstep pickup across Delhi NCR.',
-    url: `${BUSINESS.website}/contact`,
+    url: `${siteUrl()}/contact`,
   },
 }
 

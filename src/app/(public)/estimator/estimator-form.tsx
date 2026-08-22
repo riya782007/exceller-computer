@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { captureLead } from '@/lib/actions/leads'
+import { MOBILE_HINT, isValidIndianMobile, normaliseIndianMobile } from '@/lib/utils/indian-mobile'
 import {
   formatPriceBand,
   formatTurnaround,
@@ -9,6 +10,8 @@ import {
 } from '@/lib/catalog/format'
 import { buttonClasses } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { CategoryIcon } from '@/components/marketing/category-icon'
+import { IconCheck } from '@/components/marketing/icons'
 
 /**
  * Trimmed service shape passed from the server page.
@@ -123,15 +126,14 @@ export function EstimatorForm({
   async function handleSendEstimate(): Promise<void> {
     setPhoneError(null)
 
-    const digits = phone.replace(/\D/g, '')
-    if (digits.length < 10) {
-      setPhoneError('Please enter your 10-digit mobile number.')
+    if (!isValidIndianMobile(phone)) {
+      setPhoneError(MOBILE_HINT)
       return
     }
 
     setSaving(true)
     const result = await captureLead({
-      phone,
+      phone: normaliseIndianMobile(phone),
       device_type: device,
       brand,
       service_interest: selected?.name ?? '',
@@ -176,7 +178,7 @@ export function EstimatorForm({
                     !isCurrent && !isDone && 'bg-gray-200 text-gray-500'
                   )}
                 >
-                  {isDone ? '✓' : index + 1}
+                  {isDone ? <IconCheck className="h-3.5 w-3.5" /> : index + 1}
                 </span>
                 <span
                   className={cn(
@@ -213,9 +215,7 @@ export function EstimatorForm({
                   : 'border-gray-300 bg-white text-gray-700 hover:border-brand-300 hover:bg-gray-50'
               )}
             >
-              <span className="text-2xl" aria-hidden="true">
-                {option.icon}
-              </span>
+              <CategoryIcon icon={option.icon} className="h-6 w-6" />
               {option.label}
             </button>
           ))}
@@ -392,6 +392,8 @@ export function EstimatorForm({
                     autoComplete="tel"
                     value={phone}
                     onChange={(event) => setPhone(event.target.value)}
+                    aria-invalid={phoneError !== null}
+                    aria-describedby={phoneError ? 'estimator-phone-error' : undefined}
                     placeholder="10-digit mobile number"
                     className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:max-w-xs"
                   />
@@ -405,7 +407,9 @@ export function EstimatorForm({
                   </button>
                 </div>
                 {phoneError ? (
-                  <p className="mt-2 text-sm text-red-600">{phoneError}</p>
+                  <p id="estimator-phone-error" role="alert" className="mt-2 text-sm font-medium text-red-600">
+                    {phoneError}
+                  </p>
                 ) : null}
               </>
             )}

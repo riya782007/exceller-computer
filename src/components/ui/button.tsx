@@ -18,8 +18,11 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   outline:
     'border border-gray-300 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus-visible:ring-brand-500',
   ghost: 'text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400',
+  // White on the #25D366 brand green is ~2.1:1 and on #128C7E is 4.14:1 — both
+  // fail AA for the 14px bold label these buttons use. #0B6B5F is 6.4:1, so it
+  // is the resting fill; the recognisable green stays on the icon itself.
   whatsapp:
-    'bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark focus-visible:ring-whatsapp',
+    'bg-whatsapp-deep text-white shadow-sm hover:bg-whatsapp-dark focus-visible:ring-whatsapp-deep',
 }
 
 // Heights must exist in the default Tailwind scale. `h-13` is not a real class
