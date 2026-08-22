@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { BUSINESS, whatsappLink } from '@/lib/constants'
 import { PublicHeader } from './public-header'
+import { VisitorChat } from '@/components/marketing/visitor-chat'
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -62,6 +63,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+
+      <VisitorChat />
 
       {/* WhatsApp floating button */}
       <a

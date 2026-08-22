@@ -20,6 +20,7 @@ Open **Supabase Dashboard → SQL Editor → New query**. Copy and run these fil
 8. `supabase/migrations/20240101000007_create_invoices_bucket.sql`
 9. `supabase/migrations/20240101000008_media_and_whatsapp_audit.sql`
 10. `supabase/migrations/20240101000009_job_workspace.sql`
+11. `supabase/migrations/20240101000010_public_agent_offers.sql`
 
 Do **not** start at 00008. Do **not** run `SETUP_PART_A.sql` or `SETUP_PART_B.sql` during this baseline setup. Those are a later expanded CRM/RBAC architecture and require a separately reviewed migration plan.
 
@@ -42,7 +43,7 @@ The result must show `role = admin` and `is_active = true`.
 
 ## Verify the installation
 
-Run this after all 10 migrations:
+Run this after all 11 migrations:
 
 ```sql
 SELECT
@@ -54,7 +55,9 @@ SELECT
   to_regclass('public.chat_sessions') AS chat_sessions,
   to_regclass('public.business_assets') AS business_assets,
   to_regclass('public.webhook_events') AS webhook_events,
-  to_regclass('public.chat_messages') AS chat_messages;
+  to_regclass('public.chat_messages') AS chat_messages,
+  to_regclass('public.public_agent_offers') AS public_agent_offers,
+  to_regclass('public.public_agent_rate_limits') AS public_agent_rate_limits;
 ```
 
 Every column must return the matching table name, not `NULL`.
@@ -76,4 +79,14 @@ N8N_WEBHOOK_SECRET
 WEBHOOK_SIGNING_SECRET
 ```
 
-Never prefix service or webhook secrets with `NEXT_PUBLIC_`.
+For the public visitor agent, also configure server-only AI and rate-limit values, then enable Vercel Firewall / bot protection for `/api/public-chat` before making the assistant public:
+
+```text
+OPENAI_API_KEY
+OPENAI_MODEL=gpt-4.1-mini
+PUBLIC_CHAT_RATE_LIMIT_SALT
+```
+
+`PUBLIC_CHAT_RATE_LIMIT_SALT` must be a long random secret and must never use the `NEXT_PUBLIC_` prefix. Migration 00010 provides an atomic, shared per-visitor quota; Vercel Firewall provides the additional edge protection against bot traffic.
+
+Never prefix service, webhook, OpenAI, or rate-limit secrets with `NEXT_PUBLIC_`.

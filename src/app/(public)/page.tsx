@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { ServiceJourney } from '@/components/marketing/service-journey'
 
 export const metadata: Metadata = {
   title: 'Exeller Computer — Laptop & Computer Repair | Dwarka Mor, Delhi',
@@ -60,6 +61,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney />
 
       <section className="py-16 sm:py-24">
         <div className="container mx-auto px-4">
