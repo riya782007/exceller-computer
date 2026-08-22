@@ -1,4 +1,3 @@
-import { createHash } from 'crypto'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -7,6 +6,7 @@ import {
   SESSION_MAX_AGE_SECONDS,
   issueSessionToken,
   safeEqualSecret,
+  sha256Hex,
 } from '@/lib/auth/console-session'
 
 /**
@@ -34,7 +34,7 @@ function clientKey(request: NextRequest): string {
 async function withinAttemptQuota(request: NextRequest): Promise<boolean> {
   try {
     const salt = process.env.PUBLIC_CHAT_RATE_LIMIT_SALT ?? 'admin-auth'
-    const keyHash = createHash('sha256').update(`admin-auth\u0000${salt}\u0000${clientKey(request)}`).digest('hex')
+    const keyHash = await sha256Hex(`admin-auth\u0000${salt}\u0000${clientKey(request)}`)
     const { data, error } = await createAdminClient().rpc('consume_public_agent_rate_limit', {
       p_key_hash: keyHash,
       p_max_requests: MAX_ATTEMPTS_PER_MINUTE,
@@ -62,12 +62,12 @@ export async function POST(request: NextRequest) {
 
   const expected = process.env.ADMIN_ACCESS_CODE?.trim() || DEFAULT_CODE
 
-  if (!submitted || !safeEqualSecret(submitted, expected)) {
+  if (!submitted || !(await safeEqualSecret(submitted, expected))) {
     return NextResponse.json({ error: 'Invalid access code.' }, { status: 401 })
   }
 
   const cookieStore = await cookies()
-  cookieStore.set(ADMIN_SESSION_COOKIE, issueSessionToken(), {
+  cookieStore.set(ADMIN_SESSION_COOKIE, await issueSessionToken(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

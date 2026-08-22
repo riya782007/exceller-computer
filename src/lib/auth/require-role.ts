@@ -22,7 +22,7 @@ export interface AuthenticatedActor {
 async function hasAccessCodeSession(): Promise<boolean> {
   const cookieStore = await cookies()
   // Signature + expiry are verified: a cookie this server did not issue is rejected.
-  return verifySessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value)
+  return await verifySessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value)
 }
 
 /**

@@ -8,7 +8,7 @@ function isAdminHost(request: NextRequest): boolean {
 }
 
 /** Same predicate the server actions use, so routing and authorisation agree. */
-function hasAdminSession(request: NextRequest): boolean {
+function hasAdminSession(request: NextRequest): Promise<boolean> {
   return verifySessionToken(request.cookies.get(ADMIN_SESSION_COOKIE)?.value)
 }
 
@@ -20,7 +20,7 @@ function redirectToLogin(request: NextRequest, intendedPath: string) {
   return NextResponse.redirect(url)
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (isAdminHost(request)) {
@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
           ? undefined
           : `/admin${pathname}`
 
-    if (pathname !== '/login' && !hasAdminSession(request)) {
+    if (pathname !== '/login' && !(await hasAdminSession(request))) {
       return redirectToLogin(request, rewritePath ?? pathname)
     }
 
@@ -44,7 +44,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (pathname.startsWith('/admin') && !hasAdminSession(request)) {
+  if (pathname.startsWith('/admin') && !(await hasAdminSession(request))) {
     return redirectToLogin(request, pathname)
   }
 
