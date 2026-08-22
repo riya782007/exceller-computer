@@ -1,82 +1,58 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { loginSchema } from '@/lib/validations/schemas'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    // Validate input
-    const validation = loginSchema.safeParse({ email, password })
-    if (!validation.success) {
-      setError(validation.error.errors[0]?.message || 'Invalid input')
-      setLoading(false)
-      return
-    }
-
-    const supabase = createClient()
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: validation.data.email,
-      password: validation.data.password,
+    const response = await fetch('/api/admin-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code.trim() }),
     })
 
-    if (signInError) {
-      setError('Invalid email or password. Please try again.')
+    if (!response.ok) {
+      setError('Invalid access code. Please try again.')
       setLoading(false)
       return
     }
 
-    router.push('/admin/dashboard')
+    const redirect = searchParams.get('redirect') || '/admin/dashboard'
+    router.push(redirect)
     router.refresh()
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border bg-white p-8 shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
       {error && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-xl bg-red-50 p-3 text-sm font-medium text-red-700">
           {error}
         </div>
       )}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
+        <label htmlFor="access-code" className="block text-sm font-bold text-slate-900">
+          Access code
         </label>
         <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-          placeholder="you@example.com"
-          required
-          disabled={loading}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <input
-          id="password"
+          id="access-code"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-          placeholder="••••••••"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-3 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          placeholder="Enter your access code"
+          autoFocus
+          autoComplete="off"
           required
           disabled={loading}
         />
@@ -84,14 +60,14 @@ export function LoginForm() {
 
       <button
         type="submit"
-        disabled={loading}
-        className="w-full rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+        disabled={loading || code.trim().length < 4}
+        className="w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? 'Signing in...' : 'Sign In'}
+        {loading ? 'Verifying…' : 'Enter admin console'}
       </button>
 
-      <p className="text-center text-xs text-gray-500">
-        Contact admin for account access
+      <p className="text-center text-xs text-slate-500">
+        This code is provided by the business owner.
       </p>
     </form>
   )

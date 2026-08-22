@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getCurrentUser } from '@/lib/auth/require-role'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const metadata: Metadata = { title: 'Dashboard' }
 
@@ -16,9 +15,8 @@ const statusCopy: Record<FunnelStatus, { label: string; className: string }> = {
 }
 
 export default async function DashboardPage() {
-  const supabase = await createServerSupabaseClient()
-  const user = await getCurrentUser()
-  const isAdmin = user?.role === 'admin'
+  const supabase = createAdminClient()
+  const isAdmin = true
 
   const [jobsResult, inventoryResult, invoicesResult] = await Promise.all([
     supabase.from('repair_jobs').select('status', { count: 'exact', head: true }).not('status', 'in', '(delivered,cancelled)'),
