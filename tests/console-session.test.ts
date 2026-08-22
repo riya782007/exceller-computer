@@ -4,64 +4,67 @@ import { issueSessionToken, safeEqualSecret, verifySessionToken } from '@/lib/au
 /**
  * These guard the console's front door. A regression here silently exposes every
  * customer record, so the forgery cases are the point of the file.
+ *
+ * The implementation uses Web Crypto so it can also run in Edge middleware;
+ * these tests therefore exercise the same code path production does.
  */
 describe('console session tokens', () => {
   beforeEach(() => {
     process.env.ADMIN_SESSION_SECRET = 'test-signing-secret-value'
   })
 
-  it('accepts a token this server issued', () => {
-    expect(verifySessionToken(issueSessionToken())).toBe(true)
+  it('accepts a token this server issued', async () => {
+    await expect(verifySessionToken(await issueSessionToken())).resolves.toBe(true)
   })
 
-  it('rejects a self-invented token of the right length', () => {
+  it('rejects a self-invented token of the right length', async () => {
     // The original bug: any long string was treated as a valid session.
-    expect(verifySessionToken('a'.repeat(64))).toBe(false)
-    expect(verifySessionToken('a'.repeat(32))).toBe(false)
+    await expect(verifySessionToken('a'.repeat(64))).resolves.toBe(false)
+    await expect(verifySessionToken('a'.repeat(32))).resolves.toBe(false)
   })
 
-  it('rejects empty, malformed and partial tokens', () => {
-    expect(verifySessionToken(undefined)).toBe(false)
-    expect(verifySessionToken(null)).toBe(false)
-    expect(verifySessionToken('')).toBe(false)
-    expect(verifySessionToken('not-a-token')).toBe(false)
-    expect(verifySessionToken('123.abc')).toBe(false)
+  it('rejects empty, malformed and partial tokens', async () => {
+    await expect(verifySessionToken(undefined)).resolves.toBe(false)
+    await expect(verifySessionToken(null)).resolves.toBe(false)
+    await expect(verifySessionToken('')).resolves.toBe(false)
+    await expect(verifySessionToken('not-a-token')).resolves.toBe(false)
+    await expect(verifySessionToken('123.abc')).resolves.toBe(false)
   })
 
-  it('rejects a token whose signature was tampered with', () => {
-    const token = issueSessionToken()
+  it('rejects a token whose signature was tampered with', async () => {
+    const token = await issueSessionToken()
     const [expiry, nonce, signature] = token.split('.')
     const flipped = signature.startsWith('0') ? `1${signature.slice(1)}` : `0${signature.slice(1)}`
-    expect(verifySessionToken(`${expiry}.${nonce}.${flipped}`)).toBe(false)
+    await expect(verifySessionToken(`${expiry}.${nonce}.${flipped}`)).resolves.toBe(false)
   })
 
-  it('rejects a token whose expiry was extended', () => {
-    const token = issueSessionToken()
+  it('rejects a token whose expiry was extended', async () => {
+    const token = await issueSessionToken()
     const [, nonce, signature] = token.split('.')
     const future = Date.now() + 90 * 24 * 60 * 60 * 1000
-    expect(verifySessionToken(`${future}.${nonce}.${signature}`)).toBe(false)
+    await expect(verifySessionToken(`${future}.${nonce}.${signature}`)).resolves.toBe(false)
   })
 
-  it('rejects an expired token', () => {
+  it('rejects an expired token', async () => {
     const past = Date.now() - 1000
-    expect(verifySessionToken(`${past}.abc.def`)).toBe(false)
+    await expect(verifySessionToken(`${past}.abc.def`)).resolves.toBe(false)
   })
 
-  it('rejects a token signed with a different secret', () => {
-    const token = issueSessionToken()
+  it('rejects a token signed with a different secret', async () => {
+    const token = await issueSessionToken()
     process.env.ADMIN_SESSION_SECRET = 'a-completely-different-secret'
-    expect(verifySessionToken(token)).toBe(false)
+    await expect(verifySessionToken(token)).resolves.toBe(false)
   })
 })
 
 describe('safeEqualSecret', () => {
-  it('matches identical secrets', () => {
-    expect(safeEqualSecret('excellercomputer2026', 'excellercomputer2026')).toBe(true)
+  it('matches identical secrets', async () => {
+    await expect(safeEqualSecret('excellercomputer2026', 'excellercomputer2026')).resolves.toBe(true)
   })
 
-  it('rejects different secrets, including differing lengths', () => {
-    expect(safeEqualSecret('excellercomputer2026', 'excellercomputer2027')).toBe(false)
-    expect(safeEqualSecret('short', 'excellercomputer2026')).toBe(false)
-    expect(safeEqualSecret('', 'excellercomputer2026')).toBe(false)
+  it('rejects different secrets, including differing lengths', async () => {
+    await expect(safeEqualSecret('excellercomputer2026', 'excellercomputer2027')).resolves.toBe(false)
+    await expect(safeEqualSecret('short', 'excellercomputer2026')).resolves.toBe(false)
+    await expect(safeEqualSecret('', 'excellercomputer2026')).resolves.toBe(false)
   })
 })
