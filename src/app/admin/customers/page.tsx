@@ -1,6 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database'
+
+type CustomerRow = Pick<
+  Database['public']['Tables']['profiles']['Row'],
+  'id' | 'full_name' | 'email' | 'phone' | 'created_at' | 'is_active'
+>
 
 export const metadata: Metadata = {
   title: 'Customers',
@@ -23,6 +29,10 @@ export default async function CustomersPage() {
       </div>
     )
   }
+
+  // Keep the UI contract explicit while the generated Supabase schema is
+  // refreshed after the full CRM migration is applied.
+  const customerRows: CustomerRow[] = customers ?? []
 
   return (
     <div>
@@ -50,8 +60,8 @@ export default async function CustomersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {customers && customers.length > 0 ? (
-              customers.map((customer) => (
+            {customerRows.length > 0 ? (
+              customerRows.map((customer) => (
                 <tr key={customer.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3">
                     <Link href={`/admin/customers/${customer.id}`} className="font-medium text-brand-600 hover:text-brand-800">

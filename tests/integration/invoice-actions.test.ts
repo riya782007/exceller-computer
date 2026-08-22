@@ -56,39 +56,6 @@ const mockCreateServerClient = vi.mocked(createServerSupabaseClient)
 const mockGeneratePdf = vi.mocked(generateInvoicePdfBuffer)
 const mockUploadPdf = vi.mocked(uploadInvoicePdf)
 
-function createMockSupabaseClient() {
-  const mockSelect = vi.fn().mockReturnThis()
-  const mockInsert = vi.fn().mockReturnThis()
-  const mockUpdate = vi.fn().mockReturnThis()
-  const mockDelete = vi.fn().mockReturnThis()
-  const mockEq = vi.fn().mockReturnThis()
-  const mockSingle = vi.fn()
-  const mockFrom = vi.fn().mockReturnValue({
-    select: mockSelect,
-    insert: mockInsert,
-    update: mockUpdate,
-    delete: mockDelete,
-    eq: mockEq,
-    single: mockSingle,
-  })
-
-  // Make chainable
-  mockSelect.mockReturnValue({ eq: mockEq, single: mockSingle, order: vi.fn().mockReturnThis() })
-  mockInsert.mockReturnValue({ select: mockSelect, single: mockSingle })
-  mockUpdate.mockReturnValue({ eq: mockEq })
-  mockDelete.mockReturnValue({ eq: mockEq })
-  mockEq.mockReturnValue({ single: mockSingle, eq: mockEq })
-
-  return {
-    from: mockFrom,
-    _mockSelect: mockSelect,
-    _mockInsert: mockInsert,
-    _mockUpdate: mockUpdate,
-    _mockSingle: mockSingle,
-    _mockEq: mockEq,
-  }
-}
-
 const validInput = {
   customer_id: '550e8400-e29b-41d4-a716-446655440001',
   tax_type: 'intra_state' as const,

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database'
 import { formatCurrency } from '@/lib/utils'
+
+type InventoryItemRow = Database['public']['Tables']['inventory_items']['Row']
 
 export const metadata: Metadata = {
   title: 'Inventory',
@@ -23,6 +26,10 @@ export default async function InventoryPage() {
       </div>
     )
   }
+
+  // The explicit row contract keeps this screen type-safe while generated
+  // Supabase types are refreshed after the complete inventory migration.
+  const inventoryRows: InventoryItemRow[] = items ?? []
 
   return (
     <div>
@@ -55,8 +62,8 @@ export default async function InventoryPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {items && items.length > 0 ? (
-              items.map((item) => (
+            {inventoryRows.length > 0 ? (
+              inventoryRows.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-gray-600">{item.sku}</td>
                   <td className="px-4 py-3">

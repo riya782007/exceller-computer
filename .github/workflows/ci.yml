@@ -17,11 +17,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          # Node 22 matches the supported runtime and avoids the Node 20
+          # deprecation warning emitted by GitHub-hosted runners.
+          node-version: '22'
 
+      # The repository does not yet have a committed package-lock.json. Using
+      # npm ci (and npm cache) hard-fails without one, before any source code
+      # is verified. Vercel also uses npm install for this repository.
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       # Catches what tsc cannot: <Link> hrefs pointing at routes that do not
       # exist, stale brand strings, unescaped JSX entities.
@@ -32,7 +36,8 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Lint
-        run: npx next lint
+        # `next lint` was removed in Next.js 15. Run ESLint directly instead.
+        run: npx eslint . --ext .ts,.tsx
 
       - name: Unit tests
         run: npx vitest run
