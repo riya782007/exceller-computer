@@ -1,3 +1,6 @@
+// Fails the build if this module is ever pulled into a client bundle,
+// which would ship the service-role key to the browser.
+import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 

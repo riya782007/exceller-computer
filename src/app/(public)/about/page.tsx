@@ -4,7 +4,7 @@ import { ButtonLink, ButtonAnchor } from '@/components/ui/button'
 import { Breadcrumbs, BreadcrumbsJsonLd } from '@/components/marketing/breadcrumbs'
 import { TrustBar } from '@/components/marketing/trust-bar'
 import { getOrderedZones } from '@/lib/catalog/zones'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { BUSINESS, whatsappLink, siteUrl } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'About Us — Component-Level Repair Specialists in West Delhi',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: 'About Exeller Computer',
     description:
       'Chip-level repair capability, transparent pricing and up to 1 year warranty. Dwarka Mor, New Delhi.',
-    url: `${BUSINESS.website}/about`,
+    url: `${siteUrl()}/about`,
   },
 }
 

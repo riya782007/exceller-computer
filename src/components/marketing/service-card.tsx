@@ -6,6 +6,7 @@ import {
   formatTurnaround,
   type ServiceItem,
 } from '@/lib/catalog/services'
+import { IconArrowRight } from './icons'
 
 interface ServiceCardProps {
   service: ServiceItem
@@ -44,7 +45,7 @@ export function ServiceCard({ service }: ServiceCardProps): ReactElement {
       </dl>
 
       <span className="mt-4 text-sm font-medium text-brand-600 group-hover:text-brand-700">
-        View details and pricing →
+        View details and pricing <IconArrowRight className="ml-1.5 inline h-3.5 w-3.5 align-[-2px]" />
       </span>
     </Link>
   )

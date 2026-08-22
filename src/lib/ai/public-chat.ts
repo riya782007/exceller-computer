@@ -1,24 +1,15 @@
 import { SERVICES, type ServiceItem } from '@/lib/catalog/services'
 import { BUSINESS, whatsappLink } from '@/lib/constants'
 import { createAdminClient } from '@/lib/supabase/admin'
+import type { PublicAgentOffer, PublicChatLanguage, VisitorRecommendation } from '@/types/assistant'
 
-export const PUBLIC_CHAT_LANGUAGES = ['en', 'hi', 'hinglish'] as const
-export type PublicChatLanguage = typeof PUBLIC_CHAT_LANGUAGES[number]
-
-export interface PublicAgentOffer {
-  id: string
-  title: string
-  summary: string
-  priceNote: string | null
-  imageUrl: string | null
-  paymentUrl: string | null
-  serviceSlug: string | null
-  ctaLabel: string
-}
-
-export interface VisitorRecommendation extends PublicAgentOffer {
-  serviceHref: string | null
-}
+/**
+ * Language and offer shapes live in `@/types/assistant` so the client widget can
+ * import them without touching this module, which pulls in the service-role
+ * Supabase client and the whole service catalog.
+ */
+export { PUBLIC_CHAT_LANGUAGES } from '@/types/assistant'
+export type { PublicAgentOffer, PublicChatLanguage, VisitorRecommendation } from '@/types/assistant'
 
 export function languageLabel(language: PublicChatLanguage): string {
   return language === 'hi' ? 'Hindi' : language === 'hinglish' ? 'Hinglish' : 'English'

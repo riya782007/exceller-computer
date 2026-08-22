@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import { Container, Section, SectionHeading } from '@/components/ui/layout'
 import { ButtonLink, ButtonAnchor } from '@/components/ui/button'
 import { ServiceCard } from '@/components/marketing/service-card'
+import { CategoryIcon } from '@/components/marketing/category-icon'
 import { TrustBar } from '@/components/marketing/trust-bar'
 import { Breadcrumbs, BreadcrumbsJsonLd } from '@/components/marketing/breadcrumbs'
 import { SERVICE_CATEGORIES, getServicesByCategory } from '@/lib/catalog/services'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { whatsappLink, siteUrl } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Laptop & Computer Repair Services in Delhi NCR',
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     title: 'Laptop & Computer Repair Services | Exeller Computer',
     description:
       'Component-level repair for Dell, HP, Lenovo, Acer, Asus and Apple. Transparent pricing and same-day service on most faults.',
-    url: `${BUSINESS.website}/services`,
+    url: `${siteUrl()}/services`,
   },
 }
 
@@ -68,9 +69,9 @@ export default function ServicesIndexPage() {
             className="py-10 lg:py-14"
           >
             <Container>
-              <div className="flex items-start gap-3">
-                <span className="text-2xl leading-none" aria-hidden="true">
-                  {category.icon}
+              <div className="flex items-start gap-3.5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+                  <CategoryIcon icon={category.icon} className="h-5 w-5" />
                 </span>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">

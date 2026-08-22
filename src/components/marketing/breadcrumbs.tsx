@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import Link from 'next/link'
-import { BUSINESS } from '@/lib/constants'
+import { siteUrl } from '@/lib/constants'
 
 export interface Crumb {
   label: string
@@ -49,7 +49,7 @@ export function BreadcrumbsJsonLd({ items }: BreadcrumbsProps): ReactElement {
             '@type': 'ListItem',
             position: index + 1,
             name: item.label,
-            ...(item.href ? { item: `${BUSINESS.website}${item.href}` } : {}),
+            ...(item.href ? { item: `${siteUrl()}${item.href}` } : {}),
           })),
         }),
       }}

@@ -6,7 +6,7 @@ import { Breadcrumbs, BreadcrumbsJsonLd } from '@/components/marketing/breadcrum
 import { FaqAccordion, FaqJsonLd } from '@/components/marketing/faq-accordion'
 import { SERVICES, SUPPORTED_BRANDS } from '@/lib/catalog/services'
 import type { ServiceFaq } from '@/lib/catalog/services'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { BUSINESS, whatsappLink, siteUrl } from '@/lib/constants'
 import { EstimatorForm, type EstimatorService } from './estimator-form'
 
 export const metadata: Metadata = {
@@ -18,16 +18,16 @@ export const metadata: Metadata = {
     title: 'Laptop Repair Cost Estimator | Exeller Computer',
     description:
       'Instant repair price range for your laptop or desktop, with turnaround and warranty. No call required.',
-    url: `${BUSINESS.website}/estimator`,
+    url: `${siteUrl()}/estimator`,
   },
 }
 
 const CRUMBS = [{ label: 'Home', href: '/' }, { label: 'Price estimator' }]
 
 const DEVICES = [
-  { value: 'laptop', label: 'Laptop', icon: '💻' },
-  { value: 'desktop', label: 'Desktop', icon: '🖥️' },
-  { value: 'custom_pc', label: 'Custom PC', icon: '🎮' },
+  { value: 'laptop', label: 'Laptop', icon: 'laptop' },
+  { value: 'desktop', label: 'Desktop', icon: 'desktop' },
+  { value: 'custom_pc', label: 'Custom PC', icon: 'gamepad' },
 ]
 
 const ESTIMATOR_FAQS: ServiceFaq[] = [

@@ -17,7 +17,7 @@ import {
   DEVICE_TYPE_LABELS,
 } from '@/lib/catalog/services'
 import { getOrderedZones } from '@/lib/catalog/zones'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { BUSINESS, whatsappLink, siteUrl } from '@/lib/constants'
 
 interface PageProps {
   // Next 15 passes route params as a Promise
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
-      url: `${BUSINESS.website}/services/${service.slug}`,
+      url: `${siteUrl()}/services/${service.slug}`,
     },
   }
 }
@@ -91,7 +91,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
             serviceType: service.name,
             name: service.name,
             description: service.shortDescription,
-            url: `${BUSINESS.website}/services/${service.slug}`,
+            url: `${siteUrl()}/services/${service.slug}`,
             provider: {
               '@type': 'LocalBusiness',
               name: BUSINESS.name,

@@ -64,6 +64,12 @@ export interface ServiceCategory {
   key: ServiceCategoryKey
   name: string
   description: string
+  /**
+   * Icon key resolved by `resolveIcon()` in components/marketing/icons.
+   * A key rather than a component keeps this module serialisable and free of
+   * React imports; emoji were replaced because they render differently on
+   * every OS and cannot inherit brand colour.
+   */
   icon: string
   sortOrder: number
 }
@@ -90,49 +96,49 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
     key: 'display',
     name: 'Display & Screen',
     description: 'LCD and LED panel repair and replacement.',
-    icon: '🖥️',
+    icon: 'display',
     sortOrder: 1,
   },
   {
     key: 'power',
     name: 'Power & Battery',
     description: 'Battery, charging port and adapter faults.',
-    icon: '🔋',
+    icon: 'battery',
     sortOrder: 2,
   },
   {
     key: 'input',
     name: 'Keyboard & Body',
     description: 'Keyboard, trackpad and hinge repair.',
-    icon: '⌨️',
+    icon: 'keyboard',
     sortOrder: 3,
   },
   {
     key: 'mainboard',
     name: 'Motherboard & Chip',
     description: 'Chip-level and board-level repair.',
-    icon: '⚡',
+    icon: 'chip',
     sortOrder: 4,
   },
   {
     key: 'upgrade',
     name: 'Performance Upgrades',
     description: 'SSD and RAM upgrades that make an older machine usable again.',
-    icon: '🚀',
+    icon: 'rocket',
     sortOrder: 5,
   },
   {
     key: 'software',
     name: 'Software & Data',
     description: 'Operating system, virus removal and data recovery.',
-    icon: '🛡️',
+    icon: 'shield',
     sortOrder: 6,
   },
   {
     key: 'enterprise',
     name: 'Business & AMC',
     description: 'Corporate IT contracts, networking and custom builds.',
-    icon: '🏢',
+    icon: 'building',
     sortOrder: 7,
   },
 ]

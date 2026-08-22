@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Container, Section, SectionHeading } from '@/components/ui/layout'
+import { IconArrowRight } from '@/components/marketing/icons'
 import { ButtonAnchor } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumbs, BreadcrumbsJsonLd } from '@/components/marketing/breadcrumbs'
 import { getOrderedZones } from '@/lib/catalog/zones'
-import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { whatsappLink, siteUrl } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Service Areas — Laptop Repair Across Delhi NCR',
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     title: 'Service Areas | Exeller Computer',
     description:
       'Free doorstep collection and delivery across Delhi NCR, or walk in to our Dwarka Mor workshop.',
-    url: `${BUSINESS.website}/locations`,
+    url: `${siteUrl()}/locations`,
   },
 }
 
@@ -76,7 +77,7 @@ export default function LocationsIndexPage() {
                 </div>
 
                 <span className="mt-3 text-sm font-medium text-brand-600 group-hover:text-brand-700">
-                  View area details →
+                  View area details <IconArrowRight className="ml-1.5 inline h-3.5 w-3.5 align-[-2px]" />
                 </span>
               </Link>
             ))}

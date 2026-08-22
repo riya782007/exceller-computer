@@ -59,8 +59,12 @@ const config: Config = {
           950: '#172554',
         },
         whatsapp: {
+          // #25D366 is the brand green, but white text on it is ~2.1:1 and
+          // fails WCAG AA. `dark` is the accessible default for filled buttons;
+          // DEFAULT is kept for icon/brand use on light backgrounds.
           DEFAULT: '#25D366',
           dark: '#128C7E',
+          deep: '#0B6B5F',
         },
       },
       borderRadius: {
@@ -69,7 +73,9 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Populated by next/font in src/app/layout.tsx. The literal fallbacks
+        // remain so the site is still legible if the variable is ever missing.
+        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
       },
     },
   },
