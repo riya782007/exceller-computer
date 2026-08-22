@@ -417,6 +417,106 @@ export interface Database {
           }
         ]
       }
+      business_assets: {
+        Row: {
+          id: string
+          storage_path: string
+          file_name: string
+          mime_type: string
+          size_bytes: number
+          alt_text: string | null
+          purpose: string
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          storage_path: string
+          file_name: string
+          mime_type: string
+          size_bytes: number
+          alt_text?: string | null
+          purpose?: string
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          purpose?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'business_assets_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      webhook_events: {
+        Row: {
+          id: string
+          provider: string
+          provider_event_id: string
+          event_type: string
+          received_at: string
+          processed_at: string | null
+          processing_error: string | null
+          payload: Json
+        }
+        Insert: {
+          id?: string
+          provider?: string
+          provider_event_id: string
+          event_type: string
+          received_at?: string
+          processed_at?: string | null
+          processing_error?: string | null
+          payload: Json
+        }
+        Update: {
+          processed_at?: string | null
+          processing_error?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          id: string
+          session_id: string
+          provider_message_id: string
+          direction: 'inbound' | 'outbound'
+          message_type: string | null
+          body: string | null
+          metadata: Json | null
+          received_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          provider_message_id: string
+          direction: 'inbound' | 'outbound'
+          message_type?: string | null
+          body?: string | null
+          metadata?: Json | null
+          received_at?: string
+        }
+        Update: {
+          message_type?: string | null
+          body?: string | null
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'chat_messages_session_id_fkey'
+            columns: ['session_id']
+            isOneToOne: false
+            referencedRelation: 'chat_sessions'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       // Added by hand so the estimator lead-capture action compiles.
       // `npm run gen:types` will supersede this along with the other 22 tables
       // from SETUP_PART_B.sql once that migration has been applied.

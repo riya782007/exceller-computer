@@ -22,8 +22,10 @@ const navItems: NavItem[] = [
   { name: 'Jobs', href: '/admin/jobs', icon: '🔧', roles: ['admin', 'technician'] },
   { name: 'Inventory', href: '/admin/inventory', icon: '📦', roles: ['admin'] },
   { name: 'Customers', href: '/admin/customers', icon: '👤', roles: ['admin'] },
+  { name: 'Leads', href: '/admin/leads', icon: '🎯', roles: ['admin'] },
   { name: 'Technicians', href: '/admin/technicians', icon: '👨‍🔧', roles: ['admin'] },
   { name: 'Invoices', href: '/admin/invoices', icon: '🧾', roles: ['admin'] },
+  { name: 'Media Library', href: '/admin/media', icon: '🖼️', roles: ['admin'] },
   { name: 'WhatsApp', href: '/admin/whatsapp', icon: '💬', roles: ['admin'] },
   { name: 'Settings', href: '/admin/settings', icon: '⚙️', roles: ['admin'] },
 ]

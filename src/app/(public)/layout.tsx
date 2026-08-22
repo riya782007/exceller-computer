@@ -1,46 +1,12 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { BUSINESS, whatsappLink } from '@/lib/constants'
+import { PublicHeader } from './public-header'
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-brand-700">{BUSINESS.name}</span>
-          </Link>
-          <nav className="hidden items-center space-x-6 md:flex">
-            <Link href="/services" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
-              Services
-            </Link>
-            <Link href="/estimator" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
-              Price Estimator
-            </Link>
-            <Link href="/locations" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
-              Service Areas
-            </Link>
-            <Link href="/contact" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors">
-              Contact
-            </Link>
-            <a
-              href={whatsappLink('Hi, I need help with my laptop.')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full bg-whatsapp px-4 py-2 text-sm font-medium text-white hover:bg-whatsapp-dark transition-colors"
-            >
-              WhatsApp Us
-            </a>
-          </nav>
-          {/* Mobile menu button placeholder */}
-          <button className="md:hidden p-2" aria-label="Toggle menu">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Main content */}
       <main className="flex-1">{children}</main>

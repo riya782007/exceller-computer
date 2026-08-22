@@ -99,11 +99,11 @@ export default async function DashboardPage() {
             <span className="text-sm font-medium text-gray-700">Create Invoice</span>
           </Link>
           <Link
-            href="/admin/customers/new"
+            href="/admin/leads"
             className="flex items-center gap-3 rounded-lg border bg-white p-4 shadow-sm hover:border-brand-300 hover:shadow-md transition-all"
           >
-            <span className="text-xl">👤</span>
-            <span className="text-sm font-medium text-gray-700">Add Customer</span>
+            <span className="text-xl">🎯</span>
+            <span className="text-sm font-medium text-gray-700">Review New Leads</span>
           </Link>
         </div>
       </div>
