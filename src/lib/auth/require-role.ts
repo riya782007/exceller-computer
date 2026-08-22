@@ -1,76 +1,84 @@
+import { cookies } from 'next/headers'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/types'
+import { ADMIN_SESSION_COOKIE, verifySessionToken } from './console-session'
 
 /**
- * Server-side role validation.
- * Call this at the start of any Server Action or API route that requires specific roles.
- * Throws an error if the user doesn't have the required role.
+ * The owner signs in with a single access code (see /api/admin-auth), which sets
+ * an httpOnly session cookie. That is the primary path for this business: one
+ * owner, one console, no user directory to maintain.
+ *
+ * Supabase auth is still honoured when a real staff account exists, so a future
+ * multi-technician rollout works without rewriting every server action.
  */
-export async function requireRole(...allowedRoles: UserRole[]): Promise<{
-  userId: string
+export interface AuthenticatedActor {
+  userId: string | null
   role: UserRole
-}> {
-  const supabase = await createServerSupabaseClient()
+  fullName: string
+  /** 'access_code' = owner console session, 'supabase' = provisioned staff account. */
+  method: 'access_code' | 'supabase'
+}
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
+async function hasAccessCodeSession(): Promise<boolean> {
+  const cookieStore = await cookies()
+  // Signature + expiry are verified: a cookie this server did not issue is rejected.
+  return verifySessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value)
+}
 
-  if (authError || !user) {
-    throw new Error('Unauthorized: Not authenticated')
+/**
+ * Resolves the current console actor, or null when nobody is signed in.
+ * Never throws — callers decide how to handle an anonymous visitor.
+ */
+export async function getCurrentUser(): Promise<AuthenticatedActor | null> {
+  if (await hasAccessCodeSession()) {
+    return { userId: null, role: 'admin', fullName: 'Owner', method: 'access_code' }
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  try {
+    const supabase = await createServerSupabaseClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return null
 
-  if (profileError || !profile) {
-    throw new Error('Unauthorized: Profile not found')
-  }
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, full_name')
+      .eq('id', user.id)
+      .single()
+    if (!profile) return null
 
-  if (!allowedRoles.includes(profile.role)) {
-    throw new Error(
-      `Forbidden: Role '${profile.role}' does not have access. Required: ${allowedRoles.join(', ')}`
-    )
-  }
-
-  return {
-    userId: user.id,
-    role: profile.role,
+    return {
+      userId: user.id,
+      role: profile.role,
+      fullName: profile.full_name,
+      method: 'supabase',
+    }
+  } catch {
+    // Supabase misconfiguration must not present as a crash on an admin page.
+    return null
   }
 }
 
 /**
- * Get current authenticated user's profile (without role enforcement).
- * Returns null if not authenticated.
+ * Server-side authorisation gate for Server Actions and route handlers.
+ * Throws when the caller is not signed in or lacks an allowed role.
  */
-export async function getCurrentUser(): Promise<{
-  userId: string
+export async function requireRole(...allowedRoles: UserRole[]): Promise<{
+  userId: string | null
   role: UserRole
-  fullName: string
-} | null> {
-  const supabase = await createServerSupabaseClient()
+}> {
+  const actor = await getCurrentUser()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return null
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, full_name')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) return null
-
-  return {
-    userId: user.id,
-    role: profile.role,
-    fullName: profile.full_name,
+  if (!actor) {
+    throw new Error('Unauthorized: Not authenticated')
   }
+
+  if (!allowedRoles.includes(actor.role)) {
+    throw new Error(
+      `Forbidden: Role '${actor.role}' does not have access. Required: ${allowedRoles.join(', ')}`
+    )
+  }
+
+  return { userId: actor.userId, role: actor.role }
 }

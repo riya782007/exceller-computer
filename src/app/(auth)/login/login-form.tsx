@@ -27,8 +27,11 @@ export function LoginForm() {
       return
     }
 
-    const redirect = searchParams.get('redirect') || '/admin/dashboard'
-    router.push(redirect)
+    // Only same-origin paths: a crafted ?redirect= must not bounce the owner
+    // off-site straight after they authenticate.
+    const requested = searchParams.get('redirect') ?? ''
+    const safeRedirect = /^\/(?!\/)[\w\-/[\]]*$/.test(requested) ? requested : '/admin/dashboard'
+    router.push(safeRedirect)
     router.refresh()
   }
 

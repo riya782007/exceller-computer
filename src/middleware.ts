@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-
-const COOKIE_NAME = 'exeller-admin-session'
+import { ADMIN_SESSION_COOKIE, verifySessionToken } from '@/lib/auth/console-session'
 
 function isAdminHost(request: NextRequest): boolean {
   const hostname = (request.headers.get('host') ?? '').split(':')[0].toLowerCase()
@@ -8,25 +7,34 @@ function isAdminHost(request: NextRequest): boolean {
   return hostname === configuredHost || hostname.startsWith('admin.')
 }
 
+/** Same predicate the server actions use, so routing and authorisation agree. */
 function hasAdminSession(request: NextRequest): boolean {
-  return request.cookies.has(COOKIE_NAME)
+  return verifySessionToken(request.cookies.get(ADMIN_SESSION_COOKIE)?.value)
 }
 
-export async function middleware(request: NextRequest) {
+function redirectToLogin(request: NextRequest, intendedPath: string) {
+  const url = request.nextUrl.clone()
+  url.pathname = '/login'
+  url.search = ''
+  url.searchParams.set('redirect', intendedPath)
+  return NextResponse.redirect(url)
+}
+
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (isAdminHost(request)) {
-    const rewritePath = pathname === '/'
-      ? '/admin/dashboard'
-      : pathname === '/login' || pathname.startsWith('/admin')
-        ? undefined
-        : `/admin${pathname}`
+    // Clean console URLs: the browser shows admin.exellercomputer.com/jobs
+    // while Next renders /admin/jobs.
+    const rewritePath =
+      pathname === '/'
+        ? '/admin/dashboard'
+        : pathname === '/login' || pathname.startsWith('/admin')
+          ? undefined
+          : `/admin${pathname}`
 
     if (pathname !== '/login' && !hasAdminSession(request)) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      url.searchParams.set('redirect', rewritePath ?? pathname)
-      return NextResponse.redirect(url)
+      return redirectToLogin(request, rewritePath ?? pathname)
     }
 
     if (rewritePath) {
@@ -36,13 +44,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (pathname.startsWith('/admin')) {
-    if (!hasAdminSession(request)) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      url.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(url)
-    }
+  if (pathname.startsWith('/admin') && !hasAdminSession(request)) {
+    return redirectToLogin(request, pathname)
   }
 
   return NextResponse.next()

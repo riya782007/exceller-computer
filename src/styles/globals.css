@@ -57,3 +57,89 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*
+ * Console motion.
+ * Short, staggered, single-direction entrances — enough to feel considered,
+ * never enough to delay someone who is working. All of it is disabled under
+ * prefers-reduced-motion.
+ */
+@layer utilities {
+  @keyframes admin-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes admin-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes admin-ping {
+    0% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(2.1);
+    }
+  }
+
+  .animate-rise {
+    animation: admin-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade {
+    animation: admin-fade 0.4s ease-out both;
+  }
+
+  .animate-ping-slow {
+    animation: admin-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Stagger children without needing per-element classes. */
+  .stagger > * {
+    animation: admin-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.06s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.1s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.14s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.18s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.22s; }
+
+  /* Subtle depth on hover for interactive cards. */
+  .lift {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  }
+  .lift:hover {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-fade,
+  .animate-ping-slow,
+  .stagger > * {
+    animation: none !important;
+  }
+  .lift {
+    transition: none;
+  }
+  .lift:hover {
+    transform: none;
+  }
+}
