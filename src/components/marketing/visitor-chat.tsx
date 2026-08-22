@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, useMemo, useRef, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { type PublicChatLanguage, type VisitorRecommendation } from '@/lib/ai/public-chat'
 
 type ChatMessage = { role: 'visitor' | 'assistant'; content: string }
@@ -83,7 +83,56 @@ export function VisitorChat() {
   const [listening, setListening] = useState(false)
   const [voiceNoticeAccepted, setVoiceNoticeAccepted] = useState(false)
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null)
+  const dialogRef = useRef<HTMLElement | null>(null)
+  const launcherRef = useRef<HTMLButtonElement | null>(null)
+  const restoreFocusRef = useRef<HTMLElement | null>(null)
   const currentLocale = useMemo(() => localeOptions.find((option) => option.value === language) || localeOptions[0], [language])
+
+  useEffect(() => {
+    function openAssistant() {
+      restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+      setOpen(true)
+    }
+    window.addEventListener('open-exeller-assist', openAssistant)
+    return () => window.removeEventListener('open-exeller-assist', openAssistant)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const focusableSelector = 'a[href], button:not([disabled]), select:not([disabled]), textarea:not([disabled]), input:not([disabled])'
+    const frame = window.requestAnimationFrame(() => dialog.querySelector<HTMLElement>('[data-dialog-initial-focus]')?.focus())
+
+    function constrainFocus(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setOpen(false)
+        window.requestAnimationFrame(() => restoreFocusRef.current?.focus())
+        return
+      }
+      if (event.key !== 'Tab') return
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+    }
+
+    document.addEventListener('keydown', constrainFocus)
+    return () => { window.cancelAnimationFrame(frame); document.removeEventListener('keydown', constrainFocus) }
+  }, [open])
+
+  function openFromLauncher() {
+    restoreFocusRef.current = launcherRef.current
+    setOpen(true)
+  }
+
+  function closeChat() {
+    setOpen(false)
+    window.requestAnimationFrame(() => restoreFocusRef.current?.focus())
+  }
 
   function changeLanguage(nextLanguage: PublicChatLanguage) {
     setLanguage(nextLanguage)
@@ -173,11 +222,11 @@ export function VisitorChat() {
   return (
     <div className="fixed bottom-6 right-24 z-50 sm:right-24">
       {open && (
-        <section id="visitor-chat" role="dialog" aria-modal="true" aria-label="Chat with Exeller Assist" className="absolute bottom-16 right-0 flex h-[min(620px,calc(100vh-7rem))] w-[calc(100vw-2rem)] max-w-[25rem] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-950/25">
+        <section ref={dialogRef} id="visitor-chat" role="dialog" aria-modal="true" aria-label="Chat with Exeller Assist" className="absolute bottom-16 right-0 flex h-[min(620px,calc(100vh-7rem))] w-[calc(100vw-2rem)] max-w-[25rem] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-950/25">
           <header className="bg-slate-950 px-5 py-4 text-white">
             <div className="flex items-start justify-between gap-4">
               <div className="flex gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-lg">✦</span><div><p className="font-extrabold">Exeller Assist</p><p className="mt-0.5 text-xs text-slate-300">Service guide · Price ranges · Human handoff</p></div></div>
-              <button type="button" onClick={() => setOpen(false)} className="rounded-lg p-1 text-slate-300 transition hover:bg-white/10 hover:text-white" aria-label="Close chat">✕</button>
+              <button type="button" data-dialog-initial-focus onClick={closeChat} className="rounded-lg p-1 text-slate-300 transition hover:bg-white/10 hover:text-white" aria-label="Close chat">✕</button>
             </div>
             <label className="mt-4 block"><span className="sr-only">Chat language</span><select value={language} onChange={(event) => changeLanguage(event.target.value as PublicChatLanguage)} className="w-full rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm font-semibold text-white outline-none"><option className="text-slate-950" value="en">English</option><option className="text-slate-950" value="hi">हिंदी</option><option className="text-slate-950" value="hinglish">Hinglish</option></select></label>
           </header>
@@ -193,7 +242,7 @@ export function VisitorChat() {
           <div className="border-t border-slate-200 bg-white p-3"><div className="mb-3 flex gap-2 overflow-x-auto pb-1">{currentLocale.prompts.map((prompt) => <button key={prompt} type="button" disabled={pending} onClick={() => void send(prompt)} className="shrink-0 rounded-full bg-slate-100 px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-slate-200 disabled:opacity-50">{prompt}</button>)}</div><form onSubmit={handleSubmit} className="flex items-end gap-2"><textarea value={draft} onChange={(event) => setDraft(event.target.value)} rows={2} maxLength={700} placeholder={language === 'hi' ? 'अपना सवाल लिखें…' : 'Type your question…'} className="min-h-[46px] flex-1 resize-none rounded-xl border border-slate-300 px-3 py-2 text-sm leading-5 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100" /><button type="button" onClick={toggleSpeech} aria-label={listening ? 'Stop voice input' : 'Use voice input'} className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-lg transition ${listening ? 'border-red-200 bg-red-50 text-red-700' : 'border-slate-200 text-slate-700 hover:bg-slate-100'}`}>{listening ? '■' : '🎙'}</button><button disabled={pending || draft.trim().length < 2} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-50" aria-label="Send message">➜</button></form><p className="mt-2 text-[11px] leading-4 text-slate-500">By sending, you agree that chat text is processed by OpenAI. Voice input is optional and uses your browser&apos;s speech service. <Link href="/privacy" className="font-bold text-brand-700 hover:text-brand-900">Privacy details</Link></p></div>
         </section>
       )}
-      <button type="button" onClick={() => setOpen((value) => !value)} className="flex h-14 items-center gap-2 rounded-full bg-slate-950 px-4 text-sm font-bold text-white shadow-lg transition hover:bg-slate-800" aria-expanded={open} aria-controls="visitor-chat"><span className="text-lg">✦</span><span className="hidden sm:inline">Ask Exeller</span><span className="sr-only sm:hidden">Ask Exeller</span></button>
+      <button ref={launcherRef} type="button" onClick={openFromLauncher} className="flex h-14 items-center gap-2 rounded-full bg-slate-950 px-4 text-sm font-bold text-white shadow-lg transition hover:bg-slate-800" aria-expanded={open} aria-controls="visitor-chat"><span className="text-lg">✦</span><span className="hidden sm:inline">Ask Exeller</span><span className="sr-only sm:hidden">Ask Exeller</span></button>
     </div>
   )
 }
