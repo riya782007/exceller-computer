@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/database'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { IconReceipt } from '@/components/admin/icons'
 
 type InvoiceListRow = Pick<
   Database['public']['Tables']['invoices']['Row'],
@@ -147,8 +148,9 @@ export default async function InvoicesPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center text-xs text-brand-600 hover:text-brand-800"
                         title="Download PDF"
+                        aria-label="Download PDF"
                       >
-                        📄
+                        <IconReceipt className="h-4 w-4" />
                       </a>
                     ) : (
                       <span className="text-xs text-gray-400" title="PDF not available">—</span>

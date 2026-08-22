@@ -71,7 +71,7 @@ const jobWorkspaceUpdateSchema = z.object({
 })
 
 async function assertJobAccess(jobId: string): Promise<{
-  userId: string
+  userId: string | null
   technicianId: string | null
 }> {
   const { userId, role } = await requireRole('admin', 'technician')
@@ -83,8 +83,13 @@ async function assertJobAccess(jobId: string): Promise<{
     .single()
 
   if (error || !job) throw new Error('Repair job not found.')
-  if (role === 'technician' && job.technician_id !== userId) {
-    throw new Error('You can only update repair jobs assigned to you.')
+  if (role === 'technician') {
+    // A technician without a resolved identity cannot be matched to an
+    // assignment, so deny rather than fall through on a null === null compare.
+    if (!userId) throw new Error('You can only update repair jobs assigned to you.')
+    if (job.technician_id !== userId) {
+      throw new Error('You can only update repair jobs assigned to you.')
+    }
   }
 
   return { userId, technicianId: job.technician_id }

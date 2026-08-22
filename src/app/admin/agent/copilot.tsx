@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { askOwnerCopilot } from '@/lib/actions/ai'
+import { IconSparkle } from '@/components/admin/icons'
 
 const suggestedQuestions = [
   'What should I prioritise in the repair desk today?',
@@ -35,7 +36,7 @@ export function OwnerCopilot() {
   return (
     <div className="grid gap-6 xl:grid-cols-[1.35fr_.65fr]">
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="flex items-start gap-4"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-700 text-xl text-white">✦</div><div><h2 className="text-xl font-black tracking-tight text-slate-950">Ask the owner copilot</h2><p className="mt-1 text-sm leading-6 text-slate-600">It sees aggregate operational counts, not customer secrets. It recommends next steps; it cannot change records or send messages.</p></div></div>
+        <div className="flex items-start gap-4"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-700 text-white"><IconSparkle className="h-5 w-5" /></div><div><h2 className="text-xl font-black tracking-tight text-slate-950">Ask the owner copilot</h2><p className="mt-1 text-sm leading-6 text-slate-600">It sees aggregate operational counts, not customer secrets. It recommends next steps; it cannot change records or send messages.</p></div></div>
         <form onSubmit={(event) => { event.preventDefault(); ask() }} className="mt-7"><label className="block"><span className="text-sm font-bold text-slate-900">Your question</span><textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} maxLength={1500} placeholder="Example: Which operational bottlenecks should I review before closing today?" className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100" /></label><div className="mt-4 flex items-center justify-between gap-4"><p className="text-xs text-slate-500">Do not enter API keys, passwords, OTPs, or payment data.</p><button disabled={pending || question.trim().length < 4} className="shrink-0 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{pending ? 'Thinking…' : 'Get recommendation'}</button></div></form>
         {error && <div role="alert" className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"><p className="font-bold">Copilot unavailable</p><p className="mt-1">{error}</p></div>}
         {answer && <article className="mt-6 rounded-2xl border border-brand-100 bg-brand-50/50 p-5"><p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-700">Recommendation</p><div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-800">{answer}</div><p className="mt-5 border-t border-brand-100 pt-4 text-xs leading-5 text-slate-500">Review this recommendation before changing prices, approving work, issuing invoices, or committing to a customer.</p></article>}
