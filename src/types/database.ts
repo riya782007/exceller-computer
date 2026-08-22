@@ -454,6 +454,62 @@ export interface Database {
           }
         ]
       }
+      public_agent_offers: {
+        Row: {
+          id: string
+          title: string
+          summary: string
+          price_note: string | null
+          image_url: string | null
+          image_path: string | null
+          payment_url: string | null
+          service_slug: string | null
+          cta_label: string
+          is_active: boolean
+          sort_order: number
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          summary: string
+          price_note?: string | null
+          image_url?: string | null
+          image_path?: string | null
+          payment_url?: string | null
+          service_slug?: string | null
+          cta_label?: string
+          is_active?: boolean
+          sort_order?: number
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          title?: string
+          summary?: string
+          price_note?: string | null
+          image_url?: string | null
+          image_path?: string | null
+          payment_url?: string | null
+          service_slug?: string | null
+          cta_label?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'public_agent_offers_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       webhook_events: {
         Row: {
           id: string
@@ -620,6 +676,13 @@ export interface Database {
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      consume_public_agent_rate_limit: {
+        Args: {
+          p_key_hash: string
+          p_max_requests?: number
+        }
+        Returns: boolean
       }
     }
     Enums: {
